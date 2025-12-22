@@ -1,0 +1,255 @@
+// public/js/app.js
+(function () {
+  "use strict";
+
+  const e = React.createElement;
+  const { createRoot } = ReactDOM;
+  const { useState, useEffect } = React;
+
+  const AuthProvider = window.AuthProvider;
+  const AuthStatusBar = window.AuthStatusBar;
+
+  const LoginPage = window.LoginPage;
+  const RegisterPage = window.RegisterPage;
+
+  const CompanyListPage = window.CompanyListPage;
+  const CompanyDetailPage = window.CompanyDetailPage;
+  const CompanyFormPage = window.CompanyFormPage;
+
+  const ShareholderListPage = window.ShareholderListPage;
+  const ShareholderDetailPage = window.ShareholderDetailPage;
+  const ShareholderFormPage = window.ShareholderFormPage;
+
+  function parseHash() {
+    var hash = window.location.hash || "#/";
+    if (hash.charAt(0) === "#") {
+      hash = hash.slice(1);
+    }
+    if (!hash) return "/";
+    if (hash.charAt(0) !== "/") hash = "/" + hash;
+    return hash;
+  }
+
+  function matchRoute(path) {
+    const parts = path.split("/").filter(Boolean); // removes empty strings
+    if (parts.length === 0) return { page: "home" };
+
+    const [first, second, third] = parts;
+
+    if (first === "login") return { page: "login" };
+    if (first === "register") return { page: "register" };
+
+    if (first === "companies") {
+      if (!second) return { page: "companies" };
+      if (second === "new") return { page: "companyNew" };
+      if (third === "edit") return { page: "companyEdit", id: second };
+      return { page: "companyDetail", id: second };
+    }
+
+    if (first === "shareholders") {
+      if (!second) return { page: "shareholders" };
+      if (second === "new") return { page: "shareholderNew" };
+      if (third === "edit") return { page: "shareholderEdit", id: second };
+      return { page: "shareholderDetail", id: second };
+    }
+
+    return { page: "notFound", path };
+  }
+
+  function HomePage(props) {
+    function link(path) {
+      return function (ev) {
+        ev.preventDefault();
+        props.navigate(path);
+      };
+    }
+
+    return e(
+      "div",
+      null,
+      e("h2", null, "Company Structure Analyzer"),
+      e(
+        "p",
+        null,
+        "Use this app to analyse company ownership structures."
+      ),
+      e(
+        "p",
+        null,
+        "Start by viewing the ",
+        e(
+          "a",
+          { href: "#/companies", onClick: link("/companies") },
+          "Companies"
+        ),
+        " or ",
+        e(
+          "a",
+          { href: "#/shareholders", onClick: link("/shareholders") },
+          "Shareholders"
+        ),
+        "."
+      )
+    );
+  }
+
+  function NotFoundPage(props) {
+    function goHome(ev) {
+      ev.preventDefault();
+      props.navigate("/");
+    }
+    return e(
+      "div",
+      null,
+      e("h2", null, "Page not found"),
+      e("p", null, "No route for ", props.path),
+      e(
+        "p",
+        null,
+        e("a", { href: "#/", onClick: goHome }, "Go to home")
+      )
+    );
+  }
+
+  function Layout(props) {
+    const path = props.path;
+    const navigate = props.navigate;
+
+    function link(pathTarget) {
+      return function (ev) {
+        ev.preventDefault();
+        navigate(pathTarget);
+      };
+    }
+
+    return e(
+      "div",
+      null,
+      e(
+        "header",
+        null,
+        e("h1", null, "Company Structure Analyzer"),
+        e(
+          "nav",
+          null,
+          e(
+            "a",
+            { href: "#/", onClick: link("/") },
+            "Home"
+          ),
+          " | ",
+          e(
+            "a",
+            { href: "#/companies", onClick: link("/companies") },
+            "Companies"
+          ),
+          " | ",
+          e(
+            "a",
+            { href: "#/shareholders", onClick: link("/shareholders") },
+            "Shareholders"
+          )
+        ),
+        e("hr", null),
+        e(AuthStatusBar, { navigate }),
+        e("hr", null)
+      ),
+      e("main", null, props.children)
+    );
+  }
+
+  function AppInner() {
+    const [path, setPath] = useState(parseHash());
+
+    useEffect(function () {
+      function handleHashChange() {
+        setPath(parseHash());
+      }
+      window.addEventListener("hashchange", handleHashChange);
+      return function () {
+        window.removeEventListener("hashchange", handleHashChange);
+      };
+    }, []);
+
+    function navigate(newPath) {
+      if (!newPath.startsWith("/")) newPath = "/" + newPath;
+      if (newPath === path) return;
+      window.location.hash = newPath;
+    }
+
+    const route = matchRoute(path);
+
+    let pageElement;
+    switch (route.page) {
+      case "home":
+        pageElement = e(HomePage, { navigate });
+        break;
+      case "login":
+        pageElement = e(LoginPage, { navigate });
+        break;
+      case "register":
+        pageElement = e(RegisterPage, { navigate });
+        break;
+      case "companies":
+        pageElement = e(CompanyListPage, { navigate });
+        break;
+      case "companyNew":
+        pageElement = e(CompanyFormPage, {
+          navigate,
+          mode: "create",
+        });
+        break;
+      case "companyEdit":
+        pageElement = e(CompanyFormPage, {
+          navigate,
+          mode: "edit",
+          companyId: route.id,
+        });
+        break;
+      case "companyDetail":
+        pageElement = e(CompanyDetailPage, {
+          navigate,
+          companyId: route.id,
+        });
+        break;
+      case "shareholders":
+        pageElement = e(ShareholderListPage, { navigate });
+        break;
+      case "shareholderNew":
+        pageElement = e(ShareholderFormPage, {
+          navigate,
+          mode: "create",
+        });
+        break;
+      case "shareholderEdit":
+        pageElement = e(ShareholderFormPage, {
+          navigate,
+          mode: "edit",
+          shareholderId: route.id,
+        });
+        break;
+      case "shareholderDetail":
+        pageElement = e(ShareholderDetailPage, {
+          navigate,
+          shareholderId: route.id,
+        });
+        break;
+      default:
+        pageElement = e(NotFoundPage, { path, navigate });
+    }
+
+    return e(Layout, { path, navigate }, pageElement);
+  }
+
+  function App() {
+    return e(
+      AuthProvider,
+      null,
+      e(AppInner, null)
+    );
+  }
+
+  const rootElement = document.getElementById("root");
+  const root = createRoot(rootElement);
+  root.render(e(App, null));
+})();
