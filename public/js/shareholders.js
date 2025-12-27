@@ -5,6 +5,7 @@
   const e = React.createElement;
   const { useState, useEffect, useContext } = React;
   const AuthContext = window.AuthContext;
+  const useI18n = window.useI18n;
 
   function defaultNavigate(path) {
     if (!path.startsWith("/")) path = "/" + path;
@@ -15,11 +16,19 @@
     return useContext(AuthContext);
   }
 
+  function getShareholderTypeLabel(type, t) {
+    if (!type) return "";
+    const key = "shareholderType." + type;
+    const translated = t(key);
+    return translated === key ? type : translated;
+  }
+
   // --- Shareholder List ---
 
   function ShareholderListPage(props) {
     const auth = useAuth();
     const navigate = props.navigate || defaultNavigate;
+    const { t } = useI18n();
 
     const [items, setItems] = useState([]);
     const [page, setPage] = useState(1);
@@ -75,7 +84,7 @@
     return e(
       "div",
       null,
-      e("h2", null, "Shareholders"),
+      e("h2", null, t("shareholders.listTitle")),
       auth.role === "ANALYST" &&
         e(
           "p",
@@ -83,7 +92,7 @@
           e(
             "a",
             { href: "#/shareholders/new", onClick: linkToNew },
-            "Add new shareholder"
+            t("shareholders.form.createTitle")
           )
         ),
       loading && e("p", null, "Loading..."),
@@ -115,7 +124,7 @@
                     "tr",
                     { key: s.id },
                     e("td", null, s.name),
-                    e("td", null, s.type),
+                    e("td", null, getShareholderTypeLabel(s.type, t)),
                     e("td", null, s.identifier || ""),
                     e(
                       "td",
@@ -160,6 +169,8 @@
   function ShareholderDetailPage(props) {
     const auth = useAuth();
     const navigate = props.navigate || defaultNavigate;
+    const { t } = useI18n();
+
     const id = props.shareholderId;
 
     const [shareholder, setShareholder] = useState(null);
@@ -206,7 +217,7 @@
     return e(
       "div",
       null,
-      e("h2", null, "Shareholder details"),
+      e("h2", null, t("shareholders.detailTitle")),
       e(
         "p",
         null,
@@ -225,7 +236,12 @@
           "div",
           null,
           e("h3", null, shareholder.name),
-          e("p", null, "Type: ", shareholder.type),
+          e(
+            "p",
+            null,
+            "Type: ",
+            getShareholderTypeLabel(shareholder.type, t)
+          ),
           shareholder.identifier &&
             e("p", null, "Identifier: ", shareholder.identifier),
           shareholder.notes &&
@@ -240,7 +256,7 @@
                   href: "#/shareholders/" + shareholder.id + "/edit",
                   onClick: goToEdit,
                 },
-                "Edit shareholder"
+                t("shareholders.form.editTitle")
               )
             ),
           e("h3", null, "Shareholdings"),
@@ -287,6 +303,8 @@
   function ShareholderFormPage(props) {
     const auth = useAuth();
     const navigate = props.navigate || defaultNavigate;
+    const { t } = useI18n();
+
     const id = props.shareholderId || null;
     const isEdit = props.mode === "edit" || !!id;
 
@@ -329,7 +347,13 @@
       return e(
         "div",
         null,
-        e("h2", null, isEdit ? "Edit shareholder" : "Add shareholder"),
+        e(
+          "h2",
+          null,
+          isEdit
+            ? t("shareholders.form.editTitle")
+            : t("shareholders.form.createTitle")
+        ),
         e("p", { style: { color: "red" } }, "Only ANALYST can modify data.")
       );
     }
@@ -390,7 +414,13 @@
     return e(
       "div",
       null,
-      e("h2", null, isEdit ? "Edit shareholder" : "Add shareholder"),
+      e(
+        "h2",
+        null,
+        isEdit
+          ? t("shareholders.form.editTitle")
+          : t("shareholders.form.createTitle")
+      ),
       e(
         "p",
         null,
@@ -433,8 +463,16 @@
                   setType(e2.target.value);
                 },
               },
-              e("option", { value: "PERSON" }, "PERSON"),
-              e("option", { value: "COMPANY" }, "COMPANY")
+              e(
+                "option",
+                { value: "PERSON" },
+                getShareholderTypeLabel("PERSON", t)
+              ),
+              e(
+                "option",
+                { value: "COMPANY" },
+                getShareholderTypeLabel("COMPANY", t)
+              )
             )
           ),
           e(
@@ -475,7 +513,6 @@
     );
   }
 
-  // export
   window.ShareholderListPage = ShareholderListPage;
   window.ShareholderDetailPage = ShareholderDetailPage;
   window.ShareholderFormPage = ShareholderFormPage;
