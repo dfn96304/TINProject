@@ -4,6 +4,7 @@
 
   const e = React.createElement;
   const { createContext, useState, useEffect, useContext } = React;
+  const useI18n = window.useI18n;
 
   const AuthContext = createContext(null);
 
@@ -86,6 +87,7 @@
   function LoginPage(props) {
     const auth = useAuth();
     const navigate = props.navigate || defaultNavigate;
+    const { t } = useI18n();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -130,7 +132,7 @@
     return e(
       "div",
       null,
-      e("h2", null, "Login"),
+      e("h2", null, t("auth.loginTitle")),
       error && e("p", { style: { color: "red" } }, error),
       e(
         "form",
@@ -162,7 +164,7 @@
         e(
           "button",
           { type: "submit", disabled: loading },
-          loading ? "Logging in..." : "Login"
+          loading ? "Logging in..." : t("auth.loginTitle")
         )
       ),
       e(
@@ -172,7 +174,7 @@
         e(
           "a",
           { href: "#/register", onClick: linkHandler("/register") },
-          "Register"
+          t("auth.registerTitle")
         )
       )
     );
@@ -181,6 +183,7 @@
   function RegisterPage(props) {
     const auth = useAuth();
     const navigate = props.navigate || defaultNavigate;
+    const { t } = useI18n();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -237,7 +240,7 @@
     return e(
       "div",
       null,
-      e("h2", null, "Register"),
+      e("h2", null, t("auth.registerTitle")),
       error && e("p", { style: { color: "red" } }, error),
       e(
         "form",
@@ -281,7 +284,7 @@
         e(
           "button",
           { type: "submit", disabled: loading },
-          loading ? "Registering..." : "Register"
+          loading ? "Registering..." : t("auth.registerTitle")
         )
       ),
       e(
@@ -291,7 +294,7 @@
         e(
           "a",
           { href: "#/login", onClick: linkHandler("/login") },
-          "Login"
+          t("auth.loginTitle")
         )
       )
     );
@@ -300,6 +303,7 @@
   function AuthStatusBar(props) {
     const auth = useAuth();
     const navigate = props.navigate || defaultNavigate;
+    const { t } = useI18n();
 
     function handleLogout() {
       auth.logout();
@@ -317,30 +321,37 @@
       return e(
         "div",
         null,
-        "You are browsing as ",
-        e("strong", null, "Guest"),
-        " (limited view). ",
+        t("auth.status.guestPrefix"),
+        e("strong", null, t("auth.status.guestRole")),
+        t("auth.status.guestSuffix"),
+        " ",
         e(
           "a",
           { href: "#/login", onClick: linkHandler("/login") },
-          "Login"
+          t("auth.status.login")
         ),
-        " or ",
+        " ",
+        t("common.or"),
+        " ",
         e(
           "a",
           { href: "#/register", onClick: linkHandler("/register") },
-          "Register"
+          t("auth.status.register")
         )
       );
     }
 
+    const roleKey = "role." + (auth.role || "GUEST");
+
     return e(
       "div",
       null,
-      "Logged in as ",
+      t("auth.status.loggedInPrefix"),
       e("strong", null, auth.user.displayName),
-      " (role: ",
-      auth.role,
+      " (",
+      t("auth.status.loggedInRoleLabel"),
+      ": ",
+      t(roleKey),
       "). ",
       e(
         "button",
@@ -353,7 +364,6 @@
     );
   }
 
-  // export to window
   window.AuthContext = AuthContext;
   window.AuthProvider = AuthProvider;
   window.useAuth = useAuth;
