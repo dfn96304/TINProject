@@ -5,6 +5,7 @@
   const e = React.createElement;
   const { useState, useEffect, useContext } = React;
   const AuthContext = window.AuthContext;
+  const useI18n = window.useI18n;
 
   function defaultNavigate(path) {
     if (!path.startsWith("/")) path = "/" + path;
@@ -15,11 +16,22 @@
     return useContext(AuthContext);
   }
 
+  function getCompanyTypeLabel(company, t) {
+    const code = company.company_type_code;
+    if (code) {
+      const key = "companyType." + code;
+      const translated = t(key);
+      if (translated !== key) return translated;
+    }
+    return company.company_type_label || code || "";
+  }
+
   // --- Company List Page ---
 
   function CompanyListPage(props) {
     const auth = useAuth();
     const navigate = props.navigate || defaultNavigate;
+    const { t } = useI18n();
 
     const [items, setItems] = useState([]);
     const [page, setPage] = useState(1);
@@ -76,7 +88,7 @@
     return e(
       "div",
       null,
-      e("h2", null, "Companies"),
+      e("h2", null, t("companies.listTitle")),
       auth.role === "ANALYST" &&
         e(
           "p",
@@ -84,7 +96,7 @@
           e(
             "a",
             { href: "#/companies/new", onClick: linkToNew },
-            "Add new company"
+            t("companies.form.createTitle")
           )
         ),
       loading && e("p", null, "Loading..."),
@@ -118,11 +130,7 @@
                     { key: c.id },
                     e("td", null, c.name),
                     e("td", null, c.nip),
-                    e(
-                      "td",
-                      null,
-                      c.company_type_label || c.company_type_code || ""
-                    ),
+                    e("td", null, getCompanyTypeLabel(c, t)),
                     e("td", null, c.founded_at || ""),
                     e(
                       "td",
@@ -167,6 +175,8 @@
   function CompanyDetailPage(props) {
     const auth = useAuth();
     const navigate = props.navigate || defaultNavigate;
+    const { t } = useI18n();
+
     const id = props.companyId;
 
     const [company, setCompany] = useState(null);
@@ -245,7 +255,7 @@
     return e(
       "div",
       null,
-      e("h2", null, "Company details"),
+      e("h2", null, t("companies.detailTitle")),
       e(
         "p",
         null,
@@ -270,7 +280,7 @@
             "p",
             null,
             "Type: ",
-            company.company_type_label || company.company_type_code
+            getCompanyTypeLabel(company, t)
           ),
           company.founded_at &&
             e("p", null, "Founded: ", company.founded_at),
@@ -367,6 +377,8 @@
   function CompanyFormPage(props) {
     const auth = useAuth();
     const navigate = props.navigate || defaultNavigate;
+    const { t } = useI18n();
+
     const id = props.companyId || null;
     const isEdit = props.mode === "edit" || !!id;
 
@@ -429,7 +441,13 @@
       return e(
         "div",
         null,
-        e("h2", null, isEdit ? "Edit company" : "Add company"),
+        e(
+          "h2",
+          null,
+          isEdit
+            ? t("companies.form.editTitle")
+            : t("companies.form.createTitle")
+        ),
         e("p", { style: { color: "red" } }, "Only ANALYST can modify data.")
       );
     }
@@ -503,7 +521,13 @@
     return e(
       "div",
       null,
-      e("h2", null, isEdit ? "Edit company" : "Add company"),
+      e(
+        "h2",
+        null,
+        isEdit
+          ? t("companies.form.editTitle")
+          : t("companies.form.createTitle")
+      ),
       e(
         "p",
         null,
@@ -583,11 +607,18 @@
                 },
               },
               e("option", { value: "" }, "-- select --"),
-              types.map(function (t) {
+              types.map(function (tRow) {
+                const label = getCompanyTypeLabel(
+                  {
+                    company_type_code: tRow.code,
+                    company_type_label: tRow.label_pl,
+                  },
+                  t
+                );
                 return e(
                   "option",
-                  { key: t.id, value: t.id },
-                  t.label_pl + " (" + t.code + ")"
+                  { key: tRow.id, value: tRow.id },
+                  label
                 );
               })
             )
@@ -656,7 +687,6 @@
     );
   }
 
-  // export
   window.CompanyListPage = CompanyListPage;
   window.CompanyDetailPage = CompanyDetailPage;
   window.CompanyFormPage = CompanyFormPage;
