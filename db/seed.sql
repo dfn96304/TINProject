@@ -33,9 +33,9 @@ INSERT INTO users (email, password_hash, display_name, role_id, is_active, creat
     '2025-01-02T10:00:00Z'
   ),
   (
-    'anna.analyst@example.com',
+    'analyst@example.com',
     'analyst123',
-    'Anna Analyst',
+    'Analyst',
     (SELECT id FROM roles WHERE code = 'ANALYST'),
     1,
     '2025-01-03T10:00:00Z'
