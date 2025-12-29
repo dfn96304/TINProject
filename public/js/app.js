@@ -6,6 +6,9 @@
   const { createRoot } = ReactDOM;
   const { useState, useEffect } = React;
 
+  const I18nProvider = window.I18nProvider;
+  const useI18n = window.useI18n;
+
   const AuthProvider = window.AuthProvider;
   const AuthStatusBar = window.AuthStatusBar;
 
@@ -31,7 +34,7 @@
   }
 
   function matchRoute(path) {
-    const parts = path.split("/").filter(Boolean); // removes empty strings
+    const parts = path.split("/").filter(Boolean);
     if (parts.length === 0) return { page: "home" };
 
     const [first, second, third] = parts;
@@ -57,6 +60,8 @@
   }
 
   function HomePage(props) {
+    const { t } = useI18n();
+
     function link(path) {
       return function (ev) {
         ev.preventDefault();
@@ -67,26 +72,25 @@
     return e(
       "div",
       null,
-      e("h2", null, "Company Structure Analyzer"),
+      e("h2", null, t("home.title")),
+      e("p", null, t("home.intro")),
       e(
         "p",
         null,
-        "Use this app to analyse company ownership structures."
-      ),
-      e(
-        "p",
-        null,
-        "Start by viewing the ",
+        t("home.cta"),
+        " ",
         e(
           "a",
           { href: "#/companies", onClick: link("/companies") },
-          "Companies"
+          t("home.cta.companies")
         ),
-        " or ",
+        " ",
+        t("common.or"),
+        " ",
         e(
           "a",
           { href: "#/shareholders", onClick: link("/shareholders") },
-          "Shareholders"
+          t("home.cta.shareholders")
         ),
         "."
       )
@@ -94,6 +98,8 @@
   }
 
   function NotFoundPage(props) {
+    const { t } = useI18n();
+
     function goHome(ev) {
       ev.preventDefault();
       props.navigate("/");
@@ -101,12 +107,12 @@
     return e(
       "div",
       null,
-      e("h2", null, "Page not found"),
-      e("p", null, "No route for ", props.path),
+      e("h2", null, t("notFound.title")),
+      e("p", null, t("notFound.message")),
       e(
         "p",
         null,
-        e("a", { href: "#/", onClick: goHome }, "Go to home")
+        e("a", { href: "#/", onClick: goHome }, t("notFound.goHome"))
       )
     );
   }
@@ -114,11 +120,19 @@
   function Layout(props) {
     const path = props.path;
     const navigate = props.navigate;
+    const { t, lang, setLang } = useI18n();
 
     function link(pathTarget) {
       return function (ev) {
         ev.preventDefault();
         navigate(pathTarget);
+      };
+    }
+
+    function changeLang(newLang) {
+      return function (ev) {
+        ev.preventDefault();
+        setLang(newLang);
       };
     }
 
@@ -128,26 +142,51 @@
       e(
         "header",
         null,
-        e("h1", null, "Company Structure Analyzer"),
+        e("h1", null, t("app.title")),
         e(
           "nav",
           null,
           e(
             "a",
             { href: "#/", onClick: link("/") },
-            "Home"
+            t("nav.home")
           ),
           " | ",
           e(
             "a",
             { href: "#/companies", onClick: link("/companies") },
-            "Companies"
+            t("nav.companies")
           ),
           " | ",
           e(
             "a",
             { href: "#/shareholders", onClick: link("/shareholders") },
-            "Shareholders"
+            t("nav.shareholders")
+          )
+        ),
+        e(
+          "div",
+          { style: { marginTop: "4px" } },
+          t("lang.label"),
+          " ",
+          e(
+            "a",
+            {
+              href: "#",
+              onClick: changeLang("pl"),
+              style: { fontWeight: lang === "pl" ? "bold" : "normal" },
+            },
+            "PL"
+          ),
+          " / ",
+          e(
+            "a",
+            {
+              href: "#",
+              onClick: changeLang("en"),
+              style: { fontWeight: lang === "en" ? "bold" : "normal" },
+            },
+            "EN"
           )
         ),
         e("hr", null),
@@ -243,9 +282,13 @@
 
   function App() {
     return e(
-      AuthProvider,
+      I18nProvider,
       null,
-      e(AppInner, null)
+      e(
+        AuthProvider,
+        null,
+        e(AppInner, null)
+      )
     );
   }
 
