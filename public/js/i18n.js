@@ -79,6 +79,18 @@
 
             "nav.backToList": "Back to list",
 
+            "auth.error.invalidCredentials": "Invalid email or password.",
+            "auth.error.loginFailed": "Login failed.",
+
+            "pager.prev": "Prev",
+            "pager.next": "Next",
+            "pager.page": "Page",
+            "pager.of": "of",
+
+            "list.emptyCompanies": "No companies found.",
+            "list.emptyShareholders": "No shareholders found.",
+            "list.emptyShareholdings": "No shareholdings recorded.",
+            "list.emptyHoldings": "No holdings found.",
         },
         pl: {
             "app.title": "Analizator struktury spółek",
@@ -150,6 +162,19 @@
             "table.shareholder": "Udziałowiec",
 
             "nav.backToList": "Powrót do listy",
+
+            "auth.error.invalidCredentials": "Nieprawidłowy email lub hasło.",
+            "auth.error.loginFailed": "Logowanie nie powiodło się.",
+
+            "pager.prev": "Poprz.",
+            "pager.next": "Nast.",
+            "pager.page": "Strona",
+            "pager.of": "z",
+
+            "list.emptyCompanies": "Brak spółek.",
+            "list.emptyShareholders": "Brak udziałowców.",
+            "list.emptyShareholdings": "Brak zapisanych udziałów.",
+            "list.emptyHoldings": "Brak udziałów.",
         },
     };
 

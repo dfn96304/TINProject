@@ -105,7 +105,7 @@
             !loading &&
             !error &&
             (items.length === 0
-                ? e("p", null, "No companies found.")
+                ? e("p", null, t("list.emptyCompanies"))
                 : e(
                     "table",
                     {border: "1", cellPadding: "4"},
@@ -151,21 +151,25 @@
                 )),
             e(
                 "div",
-                {style: {marginTop: "10px"}},
+                { style: { marginTop: "10px" } },
                 e(
                     "button",
-                    {onClick: prevPage, disabled: page <= 1},
-                    "Prev"
+                    { onClick: prevPage, disabled: page <= 1 },
+                    t("pager.prev")
                 ),
-                " Page ",
+                " ",
+                t("pager.page"),
+                " ",
                 page,
-                " of ",
+                " ",
+                t("pager.of"),
+                " ",
                 totalPages,
                 " ",
                 e(
                     "button",
-                    {onClick: nextPage, disabled: page >= totalPages},
-                    "Next"
+                    { onClick: nextPage, disabled: page >= totalPages },
+                    t("pager.next")
                 )
             )
         );
@@ -336,7 +340,7 @@
                 e("p", {style: {color: "red"}}, actionError),
                 e("h3", null, t("table.shareholdings")),
                 shareholdings.length === 0
-                    ? e("p", null, "No shareholdings recorded.")
+                    ? e("p", null, t("list.emptyShareholdings"))
                     : e(
                         "table",
                         {border: "1", cellPadding: "4"},

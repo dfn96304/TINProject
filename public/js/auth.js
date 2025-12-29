@@ -112,9 +112,14 @@
                 })
                 .catch(function (err) {
                     if (err.data && err.data.error) {
-                        setError(err.data.error);
+                        var msg = err.data.error;
+                        if (msg === "Invalid email or password.") {
+                            setError(t("auth.error.invalidCredentials"));
+                        } else {
+                            setError(msg);
+                        }
                     } else {
-                        setError("Login failed.");
+                        setError(t("auth.error.loginFailed"));
                     }
                 })
                 .finally(function () {
