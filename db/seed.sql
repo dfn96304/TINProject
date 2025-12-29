@@ -8,13 +8,13 @@ INSERT INTO company_types (code, label_pl, description) VALUES
   ('SP_ZOO', 'Sp. z o.o.', 'Spółka z ograniczoną odpowiedzialnością'),
   ('SA',     'S.A.',       'Spółka akcyjna');
 
--- Roles (GUEST mostly conceptual, but seeded anyway)
+-- Roles
 INSERT INTO roles (code, label) VALUES
   ('GUEST',   'Gość'),
   ('VIEWER',  'Widz'),
   ('ANALYST', 'Analityk');
 
--- Users (demo passwords are plain text for now: guest123/viewer123/analyst123)
+-- Users
 INSERT INTO users (email, password_hash, display_name, role_id, is_active, created_at) VALUES
   (
     'guest@example.com',
@@ -59,7 +59,7 @@ INSERT INTO companies (
     notes
 ) VALUES
   (
-    'ACME Sp. z o.o.',
+    'ABC Sp. z o.o.',
     '1234567890',
     '0000123456',
     '2010-05-10',
@@ -71,7 +71,7 @@ INSERT INTO companies (
     'Przykładowa spółka z o.o. używana do testów.'
   ),
   (
-    'POLINVEST S.A.',
+    'CDE S.A.',
     '9876543210',
     '0000654321',
     '2015-11-20',
@@ -89,16 +89,16 @@ INSERT INTO shareholders (name, type, identifier, notes) VALUES
     'Jan Kowalski',
     'PERSON',
     'PESEL 80010112345',
-    'Założyciel ACME Sp. z o.o.'
+    'Założyciel ABC Sp. z o.o.'
   ),
   (
-    'Fundusz ABC',
+    'ABC',
     'COMPANY',
     'NIP 2222222222',
     'Fundusz inwestycyjny.'
   ),
   (
-    'Spółka Holdingowa XYZ',
+    'XYZ',
     'COMPANY',
     'NIP 3333333333',
     'Podmiot holdingowy.'
@@ -116,21 +116,21 @@ INSERT INTO shareholdings (
     'Założyciel spółki'
   ),
   (
-    (SELECT id FROM companies WHERE nip = '1234567890'),  -- ACME
+    (SELECT id FROM companies WHERE nip = '1234567890'),
     (SELECT id FROM shareholders WHERE name = 'Fundusz ABC'),
     500,
     '2018-03-01',
     'Podwyższenie kapitału'
   ),
   (
-    (SELECT id FROM companies WHERE nip = '9876543210'),  -- POLINVEST
+    (SELECT id FROM companies WHERE nip = '9876543210'),
     (SELECT id FROM shareholders WHERE name = 'Fundusz ABC'),
     10000,
     '2016-01-15',
     'Wejście kapitałowe'
   ),
   (
-    (SELECT id FROM companies WHERE nip = '9876543210'),  -- POLINVEST
+    (SELECT id FROM companies WHERE nip = '9876543210'),
     (SELECT id FROM shareholders WHERE name = 'Spółka Holdingowa XYZ'),
     5000,
     '2019-09-03',
