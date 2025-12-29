@@ -117,21 +117,21 @@ INSERT INTO shareholdings (
   ),
   (
     (SELECT id FROM companies WHERE nip = '1234567890'),
-    (SELECT id FROM shareholders WHERE name = 'Fundusz ABC'),
+    (SELECT id FROM shareholders WHERE name = 'ABC'),
     500,
     '2018-03-01',
     'Podwyższenie kapitału'
   ),
   (
     (SELECT id FROM companies WHERE nip = '9876543210'),
-    (SELECT id FROM shareholders WHERE name = 'Fundusz ABC'),
+    (SELECT id FROM shareholders WHERE name = 'ABC'),
     10000,
     '2016-01-15',
     'Wejście kapitałowe'
   ),
   (
     (SELECT id FROM companies WHERE nip = '9876543210'),
-    (SELECT id FROM shareholders WHERE name = 'Spółka Holdingowa XYZ'),
+    (SELECT id FROM shareholders WHERE name = 'XYZ'),
     5000,
     '2019-09-03',
     'Umowa inwestycyjna'
