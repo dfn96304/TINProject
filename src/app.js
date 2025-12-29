@@ -24,7 +24,7 @@ app.use(express.static(publicDir));
 
 // Simple health check
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok" });
+    res.json({status: "ok"});
 });
 
 // API routes
@@ -34,23 +34,23 @@ app.use("/api/shareholders", shareholderRoutes);
 
 // 404 handler for /api routes (static file 404s are handled by express.static)
 app.use("/api", (req, res, next) => {
-  res.status(404).json({ error: "API endpoint not found" });
+    res.status(404).json({error: "API endpoint not found"});
 });
 
 // Global error handler
 // (Controllers can call next(err) to end up here)
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
+    console.error("Unhandled error:", err);
 
-  if (res.headersSent) {
-    return next(err);
-  }
+    if (res.headersSent) {
+        return next(err);
+    }
 
-  const status = err.status || 500;
-  const message =
-    err.message || "Unexpected error occurred. Please try again later.";
+    const status = err.status || 500;
+    const message =
+        err.message || "Unexpected error occurred. Please try again later.";
 
-  res.status(status).json({ error: message });
+    res.status(status).json({error: message});
 });
 
 module.exports = app;
