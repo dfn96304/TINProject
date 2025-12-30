@@ -158,6 +158,7 @@ async function getCompanyById(req, res, next) {
                 name: companyRow.name,
                 nip: companyRow.nip,
                 founded_at: companyRow.founded_at,
+                company_type_id: companyRow.company_type_id,
                 company_type_code: companyRow.company_type_code,
                 company_type_label: companyRow.company_type_label,
             };
@@ -168,6 +169,7 @@ async function getCompanyById(req, res, next) {
                 nip: companyRow.nip,
                 krs: companyRow.krs,
                 founded_at: companyRow.founded_at,
+                company_type_id: companyRow.company_type_id,
                 company_type_code: companyRow.company_type_code,
                 company_type_label: companyRow.company_type_label,
                 share_capital: companyRow.share_capital,
