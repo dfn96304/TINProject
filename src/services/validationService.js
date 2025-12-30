@@ -114,7 +114,7 @@ function validateShareholderData(body) {
         errors.push("Shareholder last name is required.");
     }
 
-    if (identifier && !/^[0-9]+$/.test(identifier)) {
+    if (body.identifier && !/^[0-9]+$/.test(body.identifier)) {
         errors.push("Identifier must contain digits 0–9 only.");
     }
 

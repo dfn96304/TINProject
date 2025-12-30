@@ -180,35 +180,102 @@
 
         const id = props.shareholderId;
 
+        const isAnalyst = auth.role === "ANALYST";
+
         const [shareholder, setShareholder] = useState(null);
         const [holdings, setHoldings] = useState([]);
         const [loading, setLoading] = useState(true);
         const [error, setError] = useState(null);
 
+        const [actionError, setActionError] = useState(null);
+
+        // For add/delete shareholdings from the shareholder view
+        const [companies, setCompanies] = useState([]);
+        const [companiesLoading, setCompaniesLoading] = useState(false);
+        const [companiesError, setCompaniesError] = useState(null);
+
+        const [newCompanyId, setNewCompanyId] = useState("");
+        const [newSharesOwned, setNewSharesOwned] = useState("");
+        const [newAcquiredAt, setNewAcquiredAt] = useState("");
+        const [newSource, setNewSource] = useState("");
+        const [shareholdingSaving, setShareholdingSaving] = useState(false);
+        const [deletingShareholdingId, setDeletingShareholdingId] = useState(null);
+
+        function loadShareholder() {
+            if (!id) return Promise.resolve();
+            setLoading(true);
+            setError(null);
+            return window.api
+                .get("/shareholders/" + id)
+                .then(function (data) {
+                    setShareholder(data.shareholder);
+                    setHoldings(data.shareholdings || []);
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    if (err.status === 404) {
+                        setError("Shareholder not found.");
+                    } else {
+                        setError("Failed to load shareholder.");
+                    }
+                })
+                .finally(function () {
+                    setLoading(false);
+                });
+        }
+
         useEffect(
             function () {
-                if (!id) return;
-                setLoading(true);
-                setError(null);
-                window.api
-                    .get("/shareholders/" + id)
-                    .then(function (data) {
-                        setShareholder(data.shareholder);
-                        setHoldings(data.shareholdings || []);
+                loadShareholder();
+            },
+            [id]
+        );
+
+        // Load companies for the "Add shareholding" dropdown (analysts only)
+        useEffect(
+            function () {
+                if (!isAnalyst || !auth.user) return;
+
+                setCompaniesLoading(true);
+                setCompaniesError(null);
+
+                function fetchAllCompanies(page, acc) {
+                    return window.api
+                        .get("/companies?page=" + page + "&limit=100")
+                        .then(function (data) {
+                            const items = data.items || [];
+                            const merged = acc.concat(items);
+                            if (page < (data.totalPages || 1)) {
+                                return fetchAllCompanies(page + 1, merged);
+                            }
+                            return merged;
+                        });
+                }
+
+                fetchAllCompanies(1, [])
+                    .then(function (allCompanies) {
+                        setCompanies(allCompanies);
+
+                        // Set a sensible default selection (first editable company)
+                        if (!newCompanyId) {
+                            const editable = allCompanies.filter(function (c) {
+                                return c && c.created_by_user_id === auth.user.id;
+                            });
+                            if (editable.length > 0) {
+                                setNewCompanyId(String(editable[0].id));
+                            }
+                        }
                     })
                     .catch(function (err) {
                         console.error(err);
-                        if (err.status === 404) {
-                            setError("Shareholder not found.");
-                        } else {
-                            setError("Failed to load shareholder.");
-                        }
+                        setCompaniesError("Failed to load companies.");
                     })
                     .finally(function () {
-                        setLoading(false);
+                        setCompaniesLoading(false);
                     });
             },
-            [id]
+            // Only refetch when analyst identity changes
+            [isAnalyst, auth.user && auth.user.id]
         );
 
         function backToList(ev) {
@@ -219,6 +286,116 @@
         function goToEdit(ev) {
             ev.preventDefault();
             navigate("/shareholders/" + shareholder.id + "/edit");
+        }
+
+        const companyById = (companies || []).reduce(function (acc, c) {
+            if (c && c.id != null) acc[c.id] = c;
+            return acc;
+        }, {});
+
+        const editableCompanies = (companies || []).filter(function (c) {
+            return (
+                isAnalyst &&
+                auth.user &&
+                c &&
+                c.created_by_user_id === auth.user.id
+            );
+        });
+
+        function canEditCompanyId(companyId) {
+            if (!isAnalyst || !auth.user) return false;
+            const c = companyById[companyId];
+            if (!c) return false;
+            return c.created_by_user_id === auth.user.id;
+        }
+
+        function handleCreateShareholding(ev) {
+            ev.preventDefault();
+            setActionError(null);
+
+            const errs = [];
+            const companyIdNum = Number(newCompanyId);
+            const sharesNum = Number(newSharesOwned);
+
+            if (!Number.isInteger(companyIdNum) || companyIdNum <= 0) {
+                errs.push("Company is required.");
+            }
+            if (!Number.isFinite(sharesNum) || sharesNum <= 0) {
+                errs.push("Shares must be a positive number.");
+            }
+            if (newAcquiredAt && !/^\d{4}-\d{2}-\d{2}$/.test(newAcquiredAt)) {
+                errs.push("Acquired date must be YYYY-MM-DD.");
+            }
+
+            // Frontend guard: only allow selecting companies the analyst can edit
+            if (Number.isInteger(companyIdNum) && companyIdNum > 0) {
+                if (!canEditCompanyId(companyIdNum)) {
+                    errs.push("You can only add shareholdings for companies you created.");
+                }
+            }
+
+            if (errs.length > 0) {
+                setActionError(errs.join(" "));
+                return;
+            }
+
+            const payload = {
+                company_id: companyIdNum,
+                shareholder_id: Number(id),
+                shares_owned: sharesNum,
+                acquired_at: newAcquiredAt || null,
+                source: newSource || null,
+            };
+
+            setShareholdingSaving(true);
+            window.api
+                .post("/shareholders/shareholdings", payload)
+                .then(function () {
+                    setNewSharesOwned("");
+                    setNewAcquiredAt("");
+                    setNewSource("");
+                    return loadShareholder();
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    if (err.data && err.data.errors) {
+                        setActionError(err.data.errors.join(" "));
+                    } else if (err.data && err.data.error) {
+                        setActionError(err.data.error);
+                    } else {
+                        setActionError("Failed to add shareholding.");
+                    }
+                })
+                .finally(function () {
+                    setShareholdingSaving(false);
+                });
+        }
+
+        function handleDeleteShareholding(holding) {
+            if (!holding || !holding.id) return;
+
+            if (!window.confirm("Delete this shareholding?")) {
+                return;
+            }
+
+            setActionError(null);
+            setDeletingShareholdingId(holding.id);
+            window.api
+                .del("/shareholders/shareholdings/" + holding.id)
+                .then(function () {
+                    return loadShareholder();
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    if (err.data && err.data.error) {
+                        setActionError(err.data.error);
+                    } else {
+                        setActionError("Failed to delete shareholding.");
+                    }
+                })
+                .finally(function () {
+                    setDeletingShareholdingId(null);
+                });
         }
 
         return e(
@@ -251,8 +428,7 @@
                 ),
                 shareholder.identifier &&
                 e("p", null, "Identifier: ", shareholder.identifier),
-                shareholder.notes &&
-                e("p", null, "Notes: ", shareholder.notes),
+                shareholder.notes && e("p", null, "Notes: ", shareholder.notes),
                 auth.role === "ANALYST" &&
                 e(
                     "p",
@@ -266,7 +442,98 @@
                         t("shareholders.form.editTitle")
                     )
                 ),
+                actionError && e("p", {style: {color: "red"}}, actionError),
                 e("h3", null, t("table.shareholdings")),
+
+                // Add shareholding (shareholder-side only)
+                isAnalyst &&
+                auth.user &&
+                e(
+                    "div",
+                    {style: {marginBottom: "10px"}},
+                    e("h4", null, "Add shareholding"),
+                    companiesLoading && e("p", null, "Loading companies..."),
+                    companiesError &&
+                    e("p", {style: {color: "red"}}, companiesError),
+                    !companiesLoading && editableCompanies.length === 0
+                        ? e(
+                            "p",
+                            null,
+                            "You have no editable companies. Create a company first."
+                        )
+                        : e(
+                            "form",
+                            {onSubmit: handleCreateShareholding},
+                            e(
+                                "div",
+                                null,
+                                e("label", null, t("table.company") + ": "),
+                                e(
+                                    "select",
+                                    {
+                                        value: newCompanyId,
+                                        onChange: function (e2) {
+                                            setNewCompanyId(e2.target.value);
+                                        },
+                                    },
+                                    e("option", {value: ""}, "-- select --"),
+                                    editableCompanies.map(function (c) {
+                                        return e(
+                                            "option",
+                                            {key: c.id, value: String(c.id)},
+                                            c.name + " (" + c.nip + ")"
+                                        );
+                                    })
+                                )
+                            ),
+                            e(
+                                "div",
+                                null,
+                                e("label", null, t("table.shares") + ": "),
+                                e("input", {
+                                    type: "number",
+                                    value: newSharesOwned,
+                                    onChange: function (e2) {
+                                        setNewSharesOwned(e2.target.value);
+                                    },
+                                })
+                            ),
+                            e(
+                                "div",
+                                null,
+                                e(
+                                    "label",
+                                    null,
+                                    t("table.acquiredAt") + " (YYYY-MM-DD): "
+                                ),
+                                e("input", {
+                                    type: "text",
+                                    value: newAcquiredAt,
+                                    onChange: function (e2) {
+                                        setNewAcquiredAt(e2.target.value);
+                                    },
+                                })
+                            ),
+                            e(
+                                "div",
+                                null,
+                                e("label", null, t("table.source") + ": "),
+                                e("input", {
+                                    type: "text",
+                                    value: newSource,
+                                    onChange: function (e2) {
+                                        setNewSource(e2.target.value);
+                                    },
+                                })
+                            ),
+                            e(
+                                "button",
+                                {type: "submit", disabled: shareholdingSaving},
+                                shareholdingSaving ? "Adding..." : "Add"
+                            )
+                        )
+                ),
+
                 holdings.length === 0
                     ? e("p", null, t("list.emptyShareholders"))
                     : e(
@@ -282,7 +549,8 @@
                                 e("th", null, t("table.nip")),
                                 e("th", null, t("table.shares")),
                                 e("th", null, t("table.acquiredAt")),
-                                e("th", null, t("table.source"))
+                                e("th", null, t("table.source")),
+                                isAnalyst && e("th", null, t("table.actions"))
                             )
                         ),
                         e(
@@ -296,7 +564,28 @@
                                     e("td", null, h.company_nip),
                                     e("td", null, String(h.shares_owned)),
                                     e("td", null, h.acquired_at || ""),
-                                    e("td", null, h.source || "")
+                                    e("td", null, h.source || ""),
+                                    isAnalyst &&
+                                    e(
+                                        "td",
+                                        null,
+                                        canEditCompanyId(h.company_id)
+                                            ? e(
+                                                "button",
+                                                {
+                                                    onClick: function () {
+                                                        handleDeleteShareholding(h);
+                                                    },
+                                                    disabled:
+                                                        deletingShareholdingId ===
+                                                        h.id,
+                                                },
+                                                deletingShareholdingId === h.id
+                                                    ? "Deleting..."
+                                                    : "Delete"
+                                            )
+                                            : ""
+                                    )
                                 );
                             })
                         )
@@ -304,6 +593,7 @@
             )
         );
     }
+
 
     // --- Shareholder Form ---
 
