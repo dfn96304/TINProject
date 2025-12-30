@@ -259,7 +259,7 @@
                         // Set a sensible default selection (first editable company)
                         if (!newCompanyId) {
                             const editable = allCompanies.filter(function (c) {
-                                return c && c.created_by_user_id === auth.user.id;
+                                return c && (!c.is_restricted || c.created_by_user_id === auth.user.id);
                             });
                             if (editable.length > 0) {
                                 setNewCompanyId(String(editable[0].id));
@@ -302,7 +302,7 @@
             if (!isAnalyst || !auth.user) return false;
             const c = companyById[companyId];
             if (!c) return false;
-            return c.created_by_user_id === auth.user.id;
+            return !c.is_restricted || c.created_by_user_id === auth.user.id;
         }
 
         function handleCreateShareholding(ev) {
@@ -326,7 +326,7 @@
             // Frontend guard: only allow selecting companies the analyst can edit
             if (Number.isInteger(companyIdNum) && companyIdNum > 0) {
                 if (!canEditCompanyId(companyIdNum)) {
-                    errs.push("You can only add shareholdings for companies you created.");
+                    errs.push("You can only add shareholdings for restricted companies you created.");
                 }
             }
 

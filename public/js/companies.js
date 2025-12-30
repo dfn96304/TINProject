@@ -221,7 +221,7 @@
             auth.role === "ANALYST" &&
             company &&
             auth.user &&
-            company.created_by_user_id === auth.user.id;
+            ( !company.is_restricted || company.created_by_user_id === auth.user.id );
 
         function handleDelete() {
             if (!window.confirm("Are you sure you want to delete this company?")) {
