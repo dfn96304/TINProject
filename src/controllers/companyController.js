@@ -7,11 +7,18 @@ const {validateCompanyData} = require("../services/validationService");
 // Helper: can this user edit this company?
 function canUserEditCompany(user, company) {
     if (!user) return false;
+    // Only analysts can edit
     if (user.roleCode !== "ANALYST") return false;
 
-    // Resource-level permission: analyst can only modify companies they created
-    return company.created_by_user_id === user.id;
+    // Resource-level permission: if company is marked as restricted, only the creator can modify/delete
+    if (!!company.is_restricted) {
+        return company.created_by_user_id === user.id;
+    }
+
+    // Otherwise any analyst can modify/delete
+    return true;
 }
+
 
 // GET /api/companies?page=&limit=
 async function listCompanies(req, res, next) {
