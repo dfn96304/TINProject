@@ -57,9 +57,6 @@
             "shareholders.form.createTitle": "Add shareholder",
             "shareholders.form.editTitle": "Edit shareholder",
 
-            "shareholderType.PERSON": "Person",
-            "shareholderType.COMPANY": "Company",
-
             "auth.noAccountYet": "No account yet?",
             "auth.alreadyAccount": "Already have an account?",
 
@@ -91,6 +88,9 @@
             "list.emptyShareholders": "No shareholders found.",
             "list.emptyShareholdings": "No shareholdings recorded.",
             "list.emptyHoldings": "No holdings found.",
+
+            "shareholders.lastNameLabel": "Last name",
+            "table.lastName": "Last name",
         },
         pl: {
             "app.title": "Analizator struktury spółek",
@@ -141,9 +141,6 @@
             "shareholders.form.createTitle": "Dodaj udziałowca",
             "shareholders.form.editTitle": "Edytuj udziałowca",
 
-            "shareholderType.PERSON": "Osoba fizyczna",
-            "shareholderType.COMPANY": "Spółka",
-
             "auth.noAccountYet": "Nie posiadasz jeszcze konta?",
             "auth.alreadyAccount": "Posiadasz już konto?",
 
@@ -175,6 +172,9 @@
             "list.emptyShareholders": "Brak udziałowców.",
             "list.emptyShareholdings": "Brak zapisanych udziałów.",
             "list.emptyHoldings": "Brak udziałów.",
+
+            "shareholders.lastNameLabel": "Nazwisko",
+            "table.lastName": "Nazwisko",
         },
     };
 

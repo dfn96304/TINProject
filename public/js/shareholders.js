@@ -16,12 +16,14 @@
         return useContext(AuthContext);
     }
 
+    /*
     function getShareholderTypeLabel(type, t) {
         if (!type) return "";
         const key = "shareholderType." + type;
         const translated = t(key);
         return translated === key ? type : translated;
     }
+    */
 
     // --- Shareholder List ---
 
@@ -112,7 +114,7 @@
                             "tr",
                             null,
                             e("th", null, t("table.name")),
-                            e("th", null, t("table.type")),
+                            e("th", null, t("table.lastName")),
                             e("th", null, t("table.identifier")),
                             e("th", null, t("table.actions"))
                         )
@@ -125,7 +127,7 @@
                                 "tr",
                                 {key: s.id},
                                 e("td", null, s.name),
-                                e("td", null, getShareholderTypeLabel(s.type, t)),
+                                e("td", null, s.last_name || ""),
                                 e("td", null, s.identifier || ""),
                                 e(
                                     "td",
@@ -145,10 +147,10 @@
                 )),
             e(
                 "div",
-                { style: { marginTop: "10px" } },
+                {style: {marginTop: "10px"}},
                 e(
                     "button",
-                    { onClick: prevPage, disabled: page <= 1 },
+                    {onClick: prevPage, disabled: page <= 1},
                     t("pager.prev")
                 ),
                 " ",
@@ -162,7 +164,7 @@
                 " ",
                 e(
                     "button",
-                    { onClick: nextPage, disabled: page >= totalPages },
+                    {onClick: nextPage, disabled: page >= totalPages},
                     t("pager.next")
                 )
             )
@@ -244,8 +246,8 @@
                 e(
                     "p",
                     null,
-                    "Type: ",
-                    getShareholderTypeLabel(shareholder.type, t)
+                    t("shareholders.lastNameLabel") + ": ",
+                    shareholder.last_name
                 ),
                 shareholder.identifier &&
                 e("p", null, "Identifier: ", shareholder.identifier),
@@ -314,7 +316,7 @@
         const isEdit = props.mode === "edit" || !!id;
 
         const [name, setName] = useState("");
-        const [type, setType] = useState("PERSON");
+        const [lastName, setLastName] = useState("");
         const [identifier, setIdentifier] = useState("");
         const [notes, setNotes] = useState("");
         const [loading, setLoading] = useState(isEdit);
@@ -333,7 +335,7 @@
                     .then(function (data) {
                         const s = data.shareholder;
                         setName(s.name || "");
-                        setType(s.type || "PERSON");
+                        setLastName(s.last_name || "");
                         setIdentifier(s.identifier || "");
                         setNotes(s.notes || "");
                     })
@@ -374,7 +376,14 @@
 
             var errs = [];
             if (!name.trim()) errs.push("Name is required.");
-            if (!type.trim()) errs.push("Type is required.");
+            if (!lastName.trim()) errs.push("Type is required.");
+
+            var trimmedIdentifier = identifier ? identifier.trim() : "";
+
+            if (trimmedIdentifier && !/^[0-9]+$/.test(trimmedIdentifier)) {
+                errs.push("Identifier must contain digits 0–9 only.");
+            }
+
             if (errs.length > 0) {
                 setFormError(errs.join(" "));
                 return;
@@ -382,7 +391,7 @@
 
             const payload = {
                 name: name.trim(),
-                type: type.trim(),
+                last_name: lastName.trim(),
                 identifier: identifier || null,
                 notes: notes || null,
             };
@@ -459,26 +468,14 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Type: "),
-                    e(
-                        "select",
-                        {
-                            value: type,
-                            onChange: function (e2) {
-                                setType(e2.target.value);
-                            },
+                    e("label", null, t("shareholders.lastNameLabel") + ": "),
+                    e("input", {
+                        type: "text",
+                        value: lastName,
+                        onChange: function (e2) {
+                            setLastName(e2.target.value);
                         },
-                        e(
-                            "option",
-                            {value: "PERSON"},
-                            getShareholderTypeLabel("PERSON", t)
-                        ),
-                        e(
-                            "option",
-                            {value: "COMPANY"},
-                            getShareholderTypeLabel("COMPANY", t)
-                        )
-                    )
+                    })
                 ),
                 e(
                     "div",

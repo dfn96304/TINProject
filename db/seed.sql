@@ -84,24 +84,24 @@ INSERT INTO companies (
   );
 
 -- Shareholders
-INSERT INTO shareholders (name, type, identifier, notes) VALUES
+INSERT INTO shareholders (name, last_name, identifier, notes) VALUES
   (
-    'Jan Kowalski',
-    'PERSON',
-    'PESEL 80010112345',
+    'Jan',
+    'Kowalski',
+    '80010112345',
     'Założyciel ABC Sp. z o.o.'
   ),
   (
-    'ABC',
-    'COMPANY',
-    'NIP 2222222222',
-    'Fundusz inwestycyjny.'
+    'Malwina',
+    'Pawlak',
+    '61031084100',
+    'a'
   ),
   (
-    'XYZ',
-    'COMPANY',
-    'NIP 3333333333',
-    'Podmiot holdingowy.'
+    'Racław',
+    'Wiśniewski',
+    '82010493593',
+    'a'
   );
 
 -- Shareholdings: who owns what in which company
@@ -110,28 +110,28 @@ INSERT INTO shareholdings (
 ) VALUES
   (
     (SELECT id FROM companies WHERE nip = '1234567890'),  -- ACME
-    (SELECT id FROM shareholders WHERE name = 'Jan Kowalski'),
+    (SELECT id FROM shareholders WHERE name = 'Jan'),
     500,
     '2010-05-10',
     'Założyciel spółki'
   ),
   (
     (SELECT id FROM companies WHERE nip = '1234567890'),
-    (SELECT id FROM shareholders WHERE name = 'ABC'),
+    (SELECT id FROM shareholders WHERE name = 'Malwina'),
     500,
     '2018-03-01',
     'Podwyższenie kapitału'
   ),
   (
     (SELECT id FROM companies WHERE nip = '9876543210'),
-    (SELECT id FROM shareholders WHERE name = 'ABC'),
+    (SELECT id FROM shareholders WHERE name = 'Malwina'),
     10000,
     '2016-01-15',
     'Wejście kapitałowe'
   ),
   (
     (SELECT id FROM companies WHERE nip = '9876543210'),
-    (SELECT id FROM shareholders WHERE name = 'XYZ'),
+    (SELECT id FROM shareholders WHERE name = 'Racław'),
     5000,
     '2019-09-03',
     'Umowa inwestycyjna'

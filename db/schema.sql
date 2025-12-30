@@ -61,8 +61,8 @@ CREATE TABLE companies (
 CREATE TABLE shareholders (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT NOT NULL,
-    type        TEXT NOT NULL,           -- 'PERSON', 'COMPANY', etc.
-    identifier  TEXT,                    -- PESEL
+    last_name   TEXT NOT NULL,
+    identifier  TEXT, -- PESEL
     notes       TEXT
 );
 

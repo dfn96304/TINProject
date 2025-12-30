@@ -142,7 +142,7 @@ async function getCompanyById(req, res, next) {
                        sh.source,
                        s.id   AS shareholder_id,
                        s.name AS shareholder_name,
-                       s.type AS shareholder_type
+                       s.last_name AS shareholder_last_name
                 FROM shareholdings sh
                          JOIN shareholders s ON sh.shareholder_id = s.id
                 WHERE sh.company_id = ?

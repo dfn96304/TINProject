@@ -25,7 +25,7 @@ async function listShareholders(req, res, next) {
 
         const rows = await all(
             `
-                SELECT id, name, type, identifier, notes
+                SELECT id, name, last_name, identifier, notes
                 FROM shareholders
                 ORDER BY name LIMIT ?
                 OFFSET ?
@@ -56,7 +56,7 @@ async function getShareholderById(req, res, next) {
 
         const shareholder = await get(
             `
-                SELECT id, name, type, identifier, notes
+                SELECT id, name, last_name, identifier, notes
                 FROM shareholders
                 WHERE id = ?
             `,
@@ -103,19 +103,19 @@ async function createShareholder(req, res, next) {
             return res.status(400).json({errors});
         }
 
-        const {name, type, identifier, notes} = req.body;
+        const {name, last_name, identifier, notes} = req.body;
 
         const result = await run(
             `
-                INSERT INTO shareholders (name, type, identifier, notes)
+                INSERT INTO shareholders (name, last_name, identifier, notes)
                 VALUES (?, ?, ?, ?)
             `,
-            [name, type, identifier || null, notes || null]
+            [name, last_name, identifier || null, notes || null]
         );
 
         const created = await get(
             `
-                SELECT id, name, type, identifier, notes
+                SELECT id, name, last_name, identifier, notes
                 FROM shareholders
                 WHERE id = ?
             `,
@@ -149,23 +149,23 @@ async function updateShareholder(req, res, next) {
             return res.status(400).json({errors});
         }
 
-        const {name, type, identifier, notes} = req.body;
+        const {name, last_name, identifier, notes} = req.body;
 
         await run(
             `
                 UPDATE shareholders
                 SET name = ?,
-                    type = ?,
+                    last_name = ?,
                     identifier = ?,
                     notes = ?
                 WHERE id = ?
             `,
-            [name, type, identifier || null, notes || null, id]
+            [name, last_name, identifier || null, notes || null, id]
         );
 
         const updated = await get(
             `
-                SELECT id, name, type, identifier, notes
+                SELECT id, name, last_name, identifier, notes
                 FROM shareholders
                 WHERE id = ?
             `,

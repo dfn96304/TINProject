@@ -351,7 +351,7 @@
                                 "tr",
                                 null,
                                 e("th", null, t("table.shareholder")),
-                                e("th", null, t("table.type")),
+                                e("th", null, t("table.lastName")),
                                 e("th", null, t("table.shares")),
                                 e("th", null, t("table.acquiredAt")),
                                 e("th", null, t("table.source"))
@@ -365,7 +365,7 @@
                                     "tr",
                                     {key: sh.id},
                                     e("td", null, sh.shareholder_name),
-                                    e("td", null, sh.shareholder_type),
+                                    e("td", null, sh.shareholder_last_name),
                                     e("td", null, String(sh.shares_owned)),
                                     e("td", null, sh.acquired_at || ""),
                                     e("td", null, sh.source || "")
@@ -468,7 +468,16 @@
 
             var errs = [];
             if (!name.trim()) errs.push("Name is required.");
-            if (!nip.trim()) errs.push("NIP is required.");
+            if (!nip.trim()) {
+                errs.push("NIP is required.");
+            } else if (!/^[0-9]+$/.test(nip.trim())) {
+                errs.push("NIP must contain digits 0–9 only.");
+            }
+
+            if (krs && !/^[0-9]+$/.test(krs.trim())) {
+                errs.push("KRS must contain digits 0–9 only.");
+            }
+
             if (!companyTypeId) errs.push("Company type is required.");
             if (!shareCapital || Number(shareCapital) <= 0)
                 errs.push("Share capital must be positive.");
