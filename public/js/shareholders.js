@@ -294,12 +294,8 @@
         }, {});
 
         const editableCompanies = (companies || []).filter(function (c) {
-            return (
-                isAnalyst &&
-                auth.user &&
-                c &&
-                c.created_by_user_id === auth.user.id
-            );
+            if (!isAnalyst || !auth.user || !c) return false;
+            return !c.is_restricted || c.created_by_user_id === auth.user.id;
         });
 
         function canEditCompanyId(companyId) {
