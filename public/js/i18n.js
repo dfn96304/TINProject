@@ -70,7 +70,7 @@
             "table.shares": "Shares",
             "table.acquiredAt": "Acquired",
             "table.source": "Source",
-            "table.shareholdings": "Shareholdings",
+            "table.shareholdings": "Shares",
             "table.company": "Company",
             "table.shareholder": "Shareholder",
 
@@ -86,7 +86,7 @@
 
             "list.emptyCompanies": "No companies found.",
             "list.emptyShareholders": "No shareholders found.",
-            "list.emptyShareholdings": "No shareholdings recorded.",
+            "list.emptyShareholdings": "No shares recorded.",
             "list.emptyHoldings": "No holdings found.",
 
             "shareholders.lastNameLabel": "Last name",
@@ -154,7 +154,7 @@
             "table.shares": "Udziały",
             "table.acquiredAt": "Data nabycia",
             "table.source": "Źródło",
-            "table.shareholdings": "Udziały / udziałowcy",
+            "table.shareholdings": "Udziały",
             "table.company": "Spółka",
             "table.shareholder": "Udziałowiec",
 

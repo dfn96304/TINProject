@@ -52,7 +52,7 @@
                 })
                 .catch(function (err) {
                     console.error(err);
-                    setError("Failed to load companies.");
+                    setError(t("companies.error.loadListFailed"));
                 })
                 .finally(function () {
                     setLoading(false);
@@ -100,7 +100,7 @@
                     t("companies.form.createTitle")
                 )
             ),
-            loading && e("p", null, "Loading..."),
+            loading && e("p", null, t("common.loading")),
             error && e("p", {style: {color: "red"}}, error),
             !loading &&
             !error &&
@@ -205,9 +205,9 @@
                     .catch(function (err) {
                         console.error(err);
                         if (err.status === 404) {
-                            setError("Company not found.");
+                            setError(t("companies.error.notFound"));
                         } else {
-                            setError("Failed to load company.");
+                            setError(t("companies.error.loadFailed"));
                         }
                     })
                     .finally(function () {
@@ -224,7 +224,7 @@
             ( !company.is_restricted || company.created_by_user_id === auth.user.id );
 
         function handleDelete() {
-            if (!window.confirm("Are you sure you want to delete this company?")) {
+            if (!window.confirm(t("companies.confirm.delete"))) {
                 return;
             }
             setActionError(null);
@@ -239,7 +239,7 @@
                     if (err.data && err.data.error) {
                         setActionError(err.data.error);
                     } else {
-                        setActionError("Failed to delete company.");
+                        setActionError(t("companies.error.deleteFailed"));
                     }
                 })
                 .finally(function () {
@@ -270,7 +270,7 @@
                     t("nav.backToList")
                 )
             ),
-            loading && e("p", null, "Loading..."),
+            loading && e("p", null, t("common.loading")),
             error && e("p", {style: {color: "red"}}, error),
             !loading &&
             !error &&
@@ -284,33 +284,33 @@
                 e(
                     "p",
                     null,
-                    "Type: ",
+                    t("companies.field.type") + ": ",
                     getCompanyTypeLabel(company, t)
                 ),
                 company.founded_at &&
-                e("p", null, "Founded: ", company.founded_at),
-                e("p", null, "Share capital: ", String(company.share_capital)),
+                e("p", null, t("companies.field.founded") + ": ", company.founded_at),
+                e("p", null, t("companies.field.shareCapital") + ": ", String(company.share_capital)),
                 company.last_valuation !== null &&
                 company.last_valuation !== undefined &&
                 e(
                     "p",
                     null,
-                    "Last valuation: ",
+                    t("companies.field.lastValuation") + ": ",
                     String(company.last_valuation)
                 ),
                 e(
                     "p",
                     null,
-                    "Restricted: ",
-                    company.is_restricted ? "Yes" : "No"
+                    t("companies.field.restricted") + ": ",
+                    company.is_restricted ? t("common.yes") : t("common.no")
                 ),
                 company.notes &&
-                e("p", null, "Notes: ", company.notes),
+                e("p", null, t("companies.field.notes") + ": ", company.notes),
                 company.created_by_name &&
                 e(
                     "p",
                     null,
-                    "Created by: ",
+                    t("companies.field.createdBy") + ": ",
                     company.created_by_name,
                     " (user ID ",
                     company.created_by_user_id,
@@ -323,7 +323,7 @@
                     e(
                         "a",
                         {href: "#/companies/" + company.id + "/edit", onClick: goToEdit},
-                        "Edit company"
+                        t("companies.form.editTitle")
                     ),
                     " ",
                     e(
@@ -333,7 +333,7 @@
                             onClick: handleDelete,
                             disabled: deleteLoading,
                         },
-                        deleteLoading ? "Deleting..." : "Delete company"
+                        deleteLoading ? t("common.deleting") : t("common.deleteCompany")
                     )
                 ),
                 actionError &&
@@ -435,7 +435,7 @@
                 })
                 .catch(function (err) {
                     console.error(err);
-                    setError("Failed to load form data.");
+                    setError(t("companies.error.formLoadFailed"));
                 })
                 .finally(function () {
                     setLoading(false);
@@ -453,7 +453,7 @@
                         ? t("companies.form.editTitle")
                         : t("companies.form.createTitle")
                 ),
-                e("p", {style: {color: "red"}}, "Only ANALYST can modify data.")
+                e("p", {style: {color: "red"}}, t("companies.error.onlyAnalyst"))
             );
         }
 
@@ -467,23 +467,23 @@
             setFormError(null);
 
             var errs = [];
-            if (!name.trim()) errs.push("Name is required.");
+            if (!name.trim()) errs.push(t("validation.nameRequired"));
             if (!nip.trim()) {
-                errs.push("NIP is required.");
+                errs.push(t("validation.nipRequired"));
             } else if (!/^[0-9]+$/.test(nip.trim())) {
-                errs.push("NIP must contain digits 0–9 only.");
+                errs.push(t("validation.nipDigitsOnly"));
             }
 
             if (krs && !/^[0-9]+$/.test(krs.trim())) {
-                errs.push("KRS must contain digits 0–9 only.");
+                errs.push(t("validation.krsDigitsOnly"));
             }
 
-            if (!companyTypeId) errs.push("Company type is required.");
+            if (!companyTypeId) errs.push(t("validation.companyTypeRequired"));
             if (!shareCapital || Number(shareCapital) <= 0)
-                errs.push("Share capital must be positive.");
+                errs.push(t("validation.shareCapitalPositive"));
 
             if (foundedAt && !/^\d{4}-\d{2}-\d{2}$/.test(foundedAt)) {
-                errs.push("Founded date must be YYYY-MM-DD if provided.");
+                errs.push(t("validation.foundedFormatOptional"));
             }
 
             if (errs.length > 0) {
@@ -524,7 +524,7 @@
                     } else if (err.data && err.data.error) {
                         setFormError(err.data.error);
                     } else {
-                        setFormError("Failed to save company.");
+                        setFormError(t("companies.error.saveFailed"));
                     }
                 })
                 .finally(function () {
@@ -548,10 +548,10 @@
                 e(
                     "a",
                     {href: "#/companies", onClick: backToList},
-                    "Back to list"
+                    t("nav.backToList")
                 )
             ),
-            loading && e("p", null, "Loading form..."),
+            loading && e("p", null, t("common.loadingForm")),
             error && e("p", {style: {color: "red"}}, error),
             !loading &&
             !error &&
@@ -563,7 +563,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Name: "),
+                    e("label", null, t("form.name")),
                     e("input", {
                         type: "text",
                         value: name,
@@ -599,7 +599,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Founded (YYYY-MM-DD): "),
+                    e("label", null, t("form.foundedFormat") + ": "),
                     e("input", {
                         type: "text",
                         value: foundedAt,
@@ -611,7 +611,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Company type: "),
+                    e("label", null, t("form.companyType") + ": "),
                     e(
                         "select",
                         {
@@ -620,7 +620,7 @@
                                 setCompanyTypeId(e2.target.value);
                             },
                         },
-                        e("option", {value: ""}, "-- select --"),
+                        e("option", {value: ""}, t("common.selectPlaceholder")),
                         types.map(function (tRow) {
                             const label = getCompanyTypeLabel(
                                 {
@@ -640,7 +640,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Share capital (PLN): "),
+                    e("label", null, t("form.shareCapitalPln") + ": "),
                     e("input", {
                         type: "number",
                         step: "0.01",
@@ -653,7 +653,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Last valuation (PLN): "),
+                    e("label", null, t("form.lastValuationPln") + ": "),
                     e("input", {
                         type: "number",
                         step: "0.01",
@@ -666,7 +666,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Restricted: "),
+                    e("label", null, t("form.restricted") + ": "),
                     e("input", {
                         type: "checkbox",
                         checked: isRestricted,
@@ -678,7 +678,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Notes: "),
+                    e("label", null, t("form.notes") + ": "),
                     e("textarea", {
                         value: notes,
                         onChange: function (e2) {
@@ -691,11 +691,11 @@
                     {type: "submit", disabled: saving},
                     saving
                         ? isEdit
-                            ? "Saving..."
-                            : "Creating..."
+                            ? t("common.saving")
+                            : t("common.creating")
                         : isEdit
-                            ? "Save changes"
-                            : "Create company"
+                            ? t("common.saveChanges")
+                            : t("common.createCompany")
                 )
             )
         );

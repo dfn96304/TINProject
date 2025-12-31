@@ -99,7 +99,7 @@
             setError(null);
 
             if (!email.trim() || !password) {
-                setError("Email and password are required.");
+                setError(t("auth.error.emailPasswordRequired"));
                 return;
             }
 
@@ -169,7 +169,7 @@
                 e(
                     "button",
                     {type: "submit", disabled: loading},
-                    loading ? "Logging in..." : t("auth.loginTitle")
+                    loading ? t("auth.loggingIn") : t("auth.loginTitle")
                 )
             ),
             e(
@@ -202,10 +202,10 @@
             setError(null);
 
             var errs = [];
-            if (!displayName.trim()) errs.push("Display name is required.");
-            if (!email.trim()) errs.push("Email is required.");
+            if (!displayName.trim()) errs.push(t("auth.error.displayNameRequired"));
+            if (!email.trim()) errs.push(t("auth.error.emailRequired"));
             if (!password || password.length < 6)
-                errs.push("Password must be at least 6 characters.");
+                errs.push(t("auth.error.passwordMinLength"));
             if (errs.length > 0) {
                 setError(errs.join(" "));
                 return;
@@ -228,7 +228,7 @@
                     } else if (err.data && err.data.errors) {
                         setError(err.data.errors.join(" "));
                     } else {
-                        setError("Registration failed.");
+                        setError(t("auth.error.registrationFailed"));
                     }
                 })
                 .finally(function () {
@@ -254,7 +254,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Display name: "),
+                    e("label", null, t("auth.label.displayName") + ": "),
                     e("input", {
                         type: "text",
                         value: displayName,
@@ -266,7 +266,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Email: "),
+                    e("label", null, t("auth.label.email") + ": "),
                     e("input", {
                         type: "email",
                         value: email,
@@ -278,7 +278,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Password: "),
+                    e("label", null, t("auth.label.password") + ": "),
                     e("input", {
                         type: "password",
                         value: password,
@@ -290,7 +290,7 @@
                 e(
                     "button",
                     {type: "submit", disabled: loading},
-                    loading ? "Registering..." : t("auth.registerTitle")
+                    loading ? t("auth.registering") : t("auth.registerTitle")
                 )
             ),
             e(
@@ -366,7 +366,7 @@
                     type: "button",
                     onClick: handleLogout,
                 },
-                "Logout"
+                t("auth.logout")
             )
         );
     }

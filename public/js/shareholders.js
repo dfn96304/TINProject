@@ -50,7 +50,7 @@
                 })
                 .catch(function (err) {
                     console.error(err);
-                    setError("Failed to load shareholders.");
+                    setError(t("shareholders.error.loadListFailed"));
                 })
                 .finally(function () {
                     setLoading(false);
@@ -98,7 +98,7 @@
                     t("shareholders.form.createTitle")
                 )
             ),
-            loading && e("p", null, "Loading..."),
+            loading && e("p", null, t("common.loading")),
             error && e("p", {style: {color: "red"}}, error),
             !loading &&
             !error &&
@@ -138,7 +138,7 @@
                                             href: "#/shareholders/" + s.id,
                                             onClick: linkToShareholder(s.id),
                                         },
-                                        "Details"
+                                        t("table.details")
                                     )
                                 )
                             );
@@ -214,9 +214,9 @@
                 .catch(function (err) {
                     console.error(err);
                     if (err.status === 404) {
-                        setError("Shareholder not found.");
+                        setError(t("shareholders.error.notFound"));
                     } else {
-                        setError("Failed to load shareholder.");
+                        setError(t("shareholders.error.loadFailed"));
                     }
                 })
                 .finally(function () {
@@ -268,7 +268,7 @@
                     })
                     .catch(function (err) {
                         console.error(err);
-                        setCompaniesError("Failed to load companies.");
+                        setCompaniesError(t("shareholdings.error.loadCompaniesFailed"));
                     })
                     .finally(function () {
                         setCompaniesLoading(false);
@@ -370,7 +370,7 @@
         function handleDeleteShareholding(holding) {
             if (!holding || !holding.id) return;
 
-            if (!window.confirm("Delete this shareholding?")) {
+            if (!window.confirm(t("shareholdings.error.addFailed"))) {
                 return;
             }
 
@@ -386,7 +386,7 @@
                     if (err.data && err.data.error) {
                         setActionError(err.data.error);
                     } else {
-                        setActionError("Failed to delete shareholding.");
+                        setActionError(t("shareholdings.error.deleteFailed"));
                     }
                 })
                 .finally(function () {
@@ -407,7 +407,7 @@
                     t("nav.backToList")
                 )
             ),
-            loading && e("p", null, "Loading..."),
+            loading && e("p", null, t("common.loading")),
             error && e("p", {style: {color: "red"}}, error),
             !loading &&
             !error &&
@@ -423,8 +423,8 @@
                     shareholder.last_name
                 ),
                 shareholder.identifier &&
-                e("p", null, "Identifier: ", shareholder.identifier),
-                shareholder.notes && e("p", null, "Notes: ", shareholder.notes),
+                e("p", null, t("shareholders.field.identifier") + ": ", shareholder.identifier),
+                shareholder.notes && e("p", null, t("shareholders.field.notes") + ": ", shareholder.notes),
                 auth.role === "ANALYST" &&
                 e(
                     "p",
@@ -447,15 +447,15 @@
                 e(
                     "div",
                     {style: {marginBottom: "10px"}},
-                    e("h4", null, "Add shareholding"),
-                    companiesLoading && e("p", null, "Loading companies..."),
+                    e("h4", null, t("shareholdings.addTitle")),
+                    companiesLoading && e("p", null, t("common.loadingCompanies")),
                     companiesError &&
                     e("p", {style: {color: "red"}}, companiesError),
                     !companiesLoading && editableCompanies.length === 0
                         ? e(
                             "p",
                             null,
-                            "You have no editable companies. Create a company first."
+                            t("shareholdings.noEditableCompanies")
                         )
                         : e(
                             "form",
@@ -472,7 +472,7 @@
                                             setNewCompanyId(e2.target.value);
                                         },
                                     },
-                                    e("option", {value: ""}, "-- select --"),
+                                    e("option", {value: ""}, t("common.selectPlaceholder")),
                                     editableCompanies.map(function (c) {
                                         return e(
                                             "option",
@@ -525,13 +525,13 @@
                             e(
                                 "button",
                                 {type: "submit", disabled: shareholdingSaving},
-                                shareholdingSaving ? "Adding..." : "Add"
+                                shareholdingSaving ? t("common.adding") : t("common.add")
                             )
                         )
                 ),
 
                 holdings.length === 0
-                    ? e("p", null, t("list.emptyShareholders"))
+                    ? e("p", null, t("list.emptyHoldings"))
                     : e(
                         "table",
                         {border: "1", cellPadding: "4"},
@@ -647,7 +647,7 @@
                         ? t("shareholders.form.editTitle")
                         : t("shareholders.form.createTitle")
                 ),
-                e("p", {style: {color: "red"}}, "Only ANALYST can modify data.")
+                e("p", {style: {color: "red"}}, t("shareholders.error.onlyAnalyst"))
             );
         }
 
@@ -661,13 +661,13 @@
             setFormError(null);
 
             var errs = [];
-            if (!name.trim()) errs.push("Name is required.");
-            if (!lastName.trim()) errs.push("Type is required.");
+            if (!name.trim()) errs.push(t("validation.nameRequired"));
+            if (!lastName.trim()) errs.push(t("validation.lastNameRequired"));
 
             var trimmedIdentifier = identifier ? identifier.trim() : "";
 
             if (trimmedIdentifier && !/^[0-9]+$/.test(trimmedIdentifier)) {
-                errs.push("Identifier must contain digits 0–9 only.");
+                errs.push(t("validation.identifierDigitsOnly"));
             }
 
             if (errs.length > 0) {
@@ -703,7 +703,7 @@
                     } else if (err.data && err.data.error) {
                         setFormError(err.data.error);
                     } else {
-                        setFormError("Failed to save shareholder.");
+                        setFormError(t("shareholders.error.saveFailed"));
                     }
                 })
                 .finally(function () {
@@ -727,10 +727,10 @@
                 e(
                     "a",
                     {href: "#/shareholders", onClick: backToList},
-                    "Back to list"
+                    t("nav.backToList")
                 )
             ),
-            loading && e("p", null, "Loading form..."),
+            loading && e("p", null, t("common.loadingForm")),
             error && e("p", {style: {color: "red"}}, error),
             !loading &&
             !error &&
@@ -742,7 +742,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Name: "),
+                    e("label", null, t("form.name") + ": "),
                     e("input", {
                         type: "text",
                         value: name,
@@ -766,7 +766,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Identifier (optional): "),
+                    e("label", null, t("form.identifierOptional") + ": "),
                     e("input", {
                         type: "text",
                         value: identifier,
@@ -778,7 +778,7 @@
                 e(
                     "div",
                     null,
-                    e("label", null, "Notes: "),
+                    e("label", null, t("form.notes") + ": "),
                     e("textarea", {
                         value: notes,
                         onChange: function (e2) {
@@ -791,11 +791,11 @@
                     {type: "submit", disabled: saving},
                     saving
                         ? isEdit
-                            ? "Saving..."
-                            : "Creating..."
+                            ? t("common.saving")
+                            : t("common.creating")
                         : isEdit
-                            ? "Save changes"
-                            : "Create shareholder"
+                            ? t("common.saveChanges")
+                            : t("common.createShareholder")
                 )
             )
         );
