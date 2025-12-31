@@ -91,6 +91,101 @@
 
             "shareholders.lastNameLabel": "Last name",
             "table.lastName": "Last name",
+
+            "common.loading": "Loading...",
+            "common.loadingForm": "Loading form...",
+            "common.loadingCompanies": "Loading companies...",
+            "common.selectPlaceholder": "-- select --",
+            "common.yes": "Yes",
+            "common.no": "No",
+            "common.add": "Add",
+            "common.adding": "Adding...",
+            "common.saveChanges": "Save changes",
+            "common.saving": "Saving...",
+            "common.createCompany": "Create company",
+            "common.createShareholder": "Create shareholder",
+            "common.creating": "Creating...",
+            "common.deleteCompany": "Delete company",
+            "common.deleting": "Deleting...",
+
+            "form.name": "Name",
+            "form.nip": "NIP",
+            "form.krs": "KRS",
+            "form.foundedFormat": "Founded (YYYY-MM-DD)",
+            "form.companyType": "Company type",
+            "form.shareCapitalPln": "Share capital (PLN)",
+            "form.lastValuationPln": "Last valuation (PLN)",
+            "form.restricted": "Restricted",
+            "form.identifierOptional": "Identifier (optional)",
+            "form.notes": "Notes",
+
+            "companies.field.type": "Type",
+            "companies.field.founded": "Founded",
+            "companies.field.shareCapital": "Share capital",
+            "companies.field.lastValuation": "Last valuation",
+            "companies.field.restricted": "Restricted",
+            "companies.field.notes": "Notes",
+            "companies.field.createdBy": "Created by",
+
+            "shareholders.field.identifier": "Identifier",
+            "shareholders.field.notes": "Notes",
+
+            "shareholdings.addTitle": "Add shares",
+            "shareholdings.noEditableCompanies": "You have no editable companies.",
+
+            // auth
+            "auth.logout": "Logout",
+            "auth.loggingIn": "Logging in.",
+            "auth.registering": "Registering.",
+            "auth.label.displayName": "Display name",
+            "auth.label.email": "Email",
+            "auth.label.password": "Password",
+            "auth.error.emailPasswordRequired": "Email and password are required.",
+            "auth.error.displayNameRequired": "Display name is required.",
+            "auth.error.emailRequired": "Email is required.",
+            "auth.error.passwordMinLength": "Password must be at least 6 characters.",
+            "auth.error.registrationFailed": "Registration failed.",
+
+            // common actions (for shareholding delete button etc.)
+            "common.delete": "Delete",
+
+            // companies errors + confirm
+            "companies.error.loadListFailed": "Failed to load companies.",
+            "companies.error.loadFailed": "Failed to load company.",
+            "companies.error.notFound": "Company not found.",
+            "companies.error.formLoadFailed": "Failed to load form data.",
+            "companies.error.saveFailed": "Failed to save company.",
+            "companies.error.deleteFailed": "Failed to delete company.",
+            "companies.error.onlyAnalyst": "Only ANALYST can modify data.",
+            "companies.confirm.delete": "Are you sure you want to delete this company?",
+
+            // shareholders errors
+            "shareholders.error.loadListFailed": "Failed to load shareholders.",
+            "shareholders.error.loadFailed": "Failed to load shareholder.",
+            "shareholders.error.notFound": "Shareholder not found.",
+            "shareholders.error.saveFailed": "Failed to save shareholder.",
+            "shareholders.error.onlyAnalyst": "Only ANALYST can modify data.",
+
+            // shareholdings (add/delete from shareholder view)
+            "shareholdings.error.loadCompaniesFailed": "Failed to load companies.",
+            "shareholdings.error.companyRequired": "Company is required.",
+            "shareholdings.error.sharesPositive": "Shares must be a positive number.",
+            "shareholdings.error.acquiredFormat": "Acquired date must be YYYY-MM-DD.",
+            "shareholdings.error.restrictedGuard": "You can only add shareholdings for restricted companies you created.",
+            "shareholdings.error.addFailed": "Failed to add shareholding.",
+            "shareholdings.error.deleteFailed": "Failed to delete shareholding.",
+            "shareholdings.confirm.delete": "Delete this shareholding?",
+
+            // validation
+            "validation.nameRequired": "Name is required.",
+            "validation.lastNameRequired": "Last name is required.",
+            "validation.nipRequired": "NIP is required.",
+            "validation.nipDigitsOnly": "NIP must contain digits 0–9 only.",
+            "validation.krsDigitsOnly": "KRS must contain digits 0–9 only.",
+            "validation.companyTypeRequired": "Company type is required.",
+            "validation.shareCapitalPositive": "Share capital must be positive.",
+            "validation.foundedFormatOptional": "Founded date must be YYYY-MM-DD if provided.",
+            "validation.identifierDigitsOnly": "Identifier must contain digits 0–9 only.",
         },
         pl: {
             "app.title": "Analizator struktury spółek",
@@ -175,6 +270,101 @@
 
             "shareholders.lastNameLabel": "Nazwisko",
             "table.lastName": "Nazwisko",
+
+            "common.loading": "Ładowanie...",
+            "common.loadingForm": "Ładowanie formularza...",
+            "common.loadingCompanies": "Ładowanie spółek...",
+            "common.selectPlaceholder": "-- wybierz --",
+            "common.yes": "Tak",
+            "common.no": "Nie",
+            "common.add": "Dodaj",
+            "common.adding": "Dodawanie...",
+            "common.saveChanges": "Zapisz zmiany",
+            "common.saving": "Zapisywanie...",
+            "common.createCompany": "Utwórz spółkę",
+            "common.createShareholder": "Utwórz udziałowca",
+            "common.creating": "Tworzenie...",
+            "common.deleteCompany": "Usuń spółkę",
+            "common.deleting": "Usuwanie...",
+
+            "form.name": "Nazwa",
+            "form.nip": "NIP",
+            "form.krs": "KRS",
+            "form.foundedFormat": "Data założenia (YYYY-MM-DD)",
+            "form.companyType": "Typ spółki",
+            "form.shareCapitalPln": "Kapitał zakładowy (PLN)",
+            "form.lastValuationPln": "Ostatnia wycena (PLN)",
+            "form.restricted": "Ograniczona",
+            "form.identifierOptional": "Identyfikator (opcjonalnie)",
+            "form.notes": "Notatki",
+
+            "companies.field.type": "Typ",
+            "companies.field.founded": "Data założenia",
+            "companies.field.shareCapital": "Kapitał zakładowy",
+            "companies.field.lastValuation": "Ostatnia wycena",
+            "companies.field.restricted": "Ograniczona",
+            "companies.field.notes": "Notatki",
+            "companies.field.createdBy": "Utworzono przez",
+
+            "shareholders.field.identifier": "Identyfikator",
+            "shareholders.field.notes": "Notatki",
+
+            "shareholdings.addTitle": "Dodaj udziały",
+            "shareholdings.noEditableCompanies": "Brak spółek do edycji.",
+
+            // auth
+            "auth.logout": "Wyloguj",
+            "auth.loggingIn": "Logowanie...",
+            "auth.registering": "Rejestracja...",
+            "auth.label.displayName": "Nazwa wyświetlana",
+            "auth.label.email": "Email",
+            "auth.label.password": "Hasło",
+            "auth.error.emailPasswordRequired": "Email i hasło są wymagane.",
+            "auth.error.displayNameRequired": "Nazwa wyświetlana jest wymagana.",
+            "auth.error.emailRequired": "Email jest wymagany.",
+            "auth.error.passwordMinLength": "Hasło musi mieć co najmniej 6 znaków.",
+            "auth.error.registrationFailed": "Rejestracja nie powiodła się.",
+
+            // common actions
+            "common.delete": "Usuń",
+
+            // companies errors + confirm
+            "companies.error.loadListFailed": "Nie udało się wczytać spółek.",
+            "companies.error.loadFailed": "Nie udało się wczytać spółki.",
+            "companies.error.notFound": "Nie znaleziono spółki.",
+            "companies.error.formLoadFailed": "Nie udało się wczytać danych formularza.",
+            "companies.error.saveFailed": "Nie udało się zapisać spółki.",
+            "companies.error.deleteFailed": "Nie udało się usunąć spółki.",
+            "companies.error.onlyAnalyst": "Tylko ANALITYK może modyfikować dane.",
+            "companies.confirm.delete": "Czy na pewno chcesz usunąć tę spółkę?",
+
+            // shareholders errors
+            "shareholders.error.loadListFailed": "Nie udało się wczytać udziałowców.",
+            "shareholders.error.loadFailed": "Nie udało się wczytać udziałowca.",
+            "shareholders.error.notFound": "Nie znaleziono udziałowca.",
+            "shareholders.error.saveFailed": "Nie udało się zapisać udziałowca.",
+            "shareholders.error.onlyAnalyst": "Tylko ANALITYK może modyfikować dane.",
+
+            // shareholdings
+            "shareholdings.error.loadCompaniesFailed": "Nie udało się wczytać spółek.",
+            "shareholdings.error.companyRequired": "Wybierz spółkę.",
+            "shareholdings.error.sharesPositive": "Udziały muszą być liczbą dodatnią.",
+            "shareholdings.error.acquiredFormat": "Data nabycia musi mieć format YYYY-MM-DD.",
+            "shareholdings.error.restrictedGuard": "Możesz dodać udziały tylko dla spółek z ograniczeniem, które utworzyłeś(-aś).",
+            "shareholdings.error.addFailed": "Nie udało się dodać udziałów.",
+            "shareholdings.error.deleteFailed": "Nie udało się usunąć udziałów.",
+            "shareholdings.confirm.delete": "Usunąć ten wpis udziałów?",
+
+            // validation
+            "validation.nameRequired": "Nazwa jest wymagana.",
+            "validation.lastNameRequired": "Nazwisko jest wymagane.",
+            "validation.nipRequired": "NIP jest wymagany.",
+            "validation.nipDigitsOnly": "NIP może zawierać tylko cyfry 0–9.",
+            "validation.krsDigitsOnly": "KRS może zawierać tylko cyfry 0–9.",
+            "validation.companyTypeRequired": "Typ spółki jest wymagany.",
+            "validation.shareCapitalPositive": "Kapitał zakładowy musi być dodatni.",
+            "validation.foundedFormatOptional": "Jeśli podano, data założenia musi mieć format YYYY-MM-DD.",
+            "validation.identifierDigitsOnly": "Identyfikator może zawierać tylko cyfry 0–9."
         },
     };
 
