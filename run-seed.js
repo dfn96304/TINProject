@@ -19,7 +19,7 @@ const db = new sqlite3.Database(
   (err) => {
     if (err) {
       console.error("Error opening database:", err.message);
-      console.error("Hint: run `node run-schema.js` first to create the database.");
+      console.error("Hint: run `npm run db:schema` first to create the database.");
       process.exit(1);
     }
   }
