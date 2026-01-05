@@ -35,16 +35,6 @@
         return useContext(AuthContext);
     }
 
-    /*
-    // getShareholderTypeLabel: Function used by this module.
-    function getShareholderTypeLabel(type, t) {
-        if (!type) return "";
-        const key = "shareholderType." + type;
-        const translated = t(key);
-        return translated === key ? type : translated;
-    }
-    */
-
     // --- Shareholder List ---
 
     // ShareholderListPage: Paginated list of shareholders.
@@ -349,19 +339,19 @@
             const sharesNum = Number(newSharesOwned);
 
             if (!Number.isInteger(companyIdNum) || companyIdNum <= 0) {
-                errs.push("Company is required.");
+                errs.push(t("shareholdings.error.companyRequired"));
             }
             if (!Number.isFinite(sharesNum) || sharesNum <= 0) {
-                errs.push("Shares must be a positive number.");
+                errs.push(t("shareholdings.error.sharesPositive"));
             }
             if (newAcquiredAt && !/^\d{4}-\d{2}-\d{2}$/.test(newAcquiredAt)) {
-                errs.push("Acquired date must be YYYY-MM-DD.");
+                errs.push(t("shareholdings.error.acquiredFormat"));
             }
 
             // Frontend guard: only allow selecting companies the analyst can edit
             if (Number.isInteger(companyIdNum) && companyIdNum > 0) {
                 if (!canEditCompanyId(companyIdNum)) {
-                    errs.push("You can only add shareholdings for restricted companies you created.");
+                    errs.push(t("shareholdings.error.restrictedGuard"));
                 }
             }
 
@@ -394,7 +384,7 @@
                     } else if (err.data && err.data.error) {
                         setActionError(err.data.error);
                     } else {
-                        setActionError("Failed to add shareholding.");
+                        setActionError("Error POST shareholdings");
                     }
                 })
                 .finally(function () {
@@ -613,8 +603,8 @@
                                                         h.id,
                                                 },
                                                 deletingShareholdingId === h.id
-                                                    ? "Deleting..."
-                                                    : "Delete"
+                                                    ? t("common.deleting")
+                                                    : t("common.delete")
                                             )
                                             : ""
                                     )
@@ -665,7 +655,7 @@
                     })
                     .catch(function (err) {
                         console.error(err);
-                        setError("Failed to load shareholder.");
+                        setError("Error GET shareholder");
                     })
                     .finally(function () {
                         setLoading(false);
