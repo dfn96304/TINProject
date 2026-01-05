@@ -16,7 +16,9 @@ To access on a local machine for testing, open `http://localhost:3000` in a brow
 
 ## Database and port configuration
 The app uses an SQLite database.
+
 By default, the app uses a database file named `company-structure.db` in the root folder of the application as determined by `__dirname`.
+
 To change the path to the database, include an env var named `DB_PATH`, which automatically changes the used database for DB scripts and the application itself:
 ```
 # Windows PowerShell
