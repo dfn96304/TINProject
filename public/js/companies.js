@@ -1,21 +1,40 @@
 // public/js/companies.js
+
+/*
+ * companies.js
+ * UI pages for Companies:
+ * - List with pagination
+ * - Detail view
+ * - Create/Edit form (ANALYST only)
+ */
+
 (function () {
     "use strict";
 
-    const e = React.createElement;
-    const {useState, useEffect, useContext} = React;
-    const AuthContext = window.AuthContext;
-    const useI18n = window.useI18n;
+    // `use strict` helps catch some common JavaScript mistakes early.
 
+
+    const e = React.createElement;
+    // Shorthand: `e(...)` is the same as `React.createElement(...)` (JSX without a build step).
+    const {useState, useEffect, useContext} = React;
+    // Pull React APIs we use in this file (hooks, context helpers, etc.).
+    const AuthContext = window.AuthContext;
+    // Grab a value exported by another script via `window.*` (no bundler/imports in this project).
+    const useI18n = window.useI18n;
+    // Grab a value exported by another script via `window.*` (no bundler/imports in this project).
+
+    // defaultNavigate: Small helper that updates the hash (/#/...) to perform SPA navigation.
     function defaultNavigate(path) {
         if (!path.startsWith("/")) path = "/" + path;
         window.location.hash = path;
     }
 
+    // useAuth: Custom hook: a friendly name for `useContext(AuthContext)`.
     function useAuth() {
         return useContext(AuthContext);
     }
 
+    // getCompanyTypeLabel: Pick a human-friendly label for a company type, preferring translated labels when available.
     function getCompanyTypeLabel(company, t) {
         const code = company.company_type_code;
         if (code) {
@@ -28,6 +47,7 @@
 
     // --- Company List Page ---
 
+    // CompanyListPage: Paginated list of companies. Fetches `/api/companies?page=...&limit=...`.
     function CompanyListPage(props) {
         const auth = useAuth();
         const navigate = props.navigate || defaultNavigate;
@@ -39,6 +59,7 @@
         const [loading, setLoading] = useState(true);
         const [error, setError] = useState(null);
 
+        // loadData: Function used by this module.
         function loadData(p) {
             setLoading(true);
             setError(null);
@@ -59,6 +80,7 @@
                 });
         }
 
+        // React effect: run side-effects after render (fetch data, attach listeners, sync storage, etc.).
         useEffect(
             function () {
                 loadData(page);
@@ -66,14 +88,17 @@
             [page]
         );
 
+        // prevPage: Function used by this module.
         function prevPage() {
             if (page > 1) setPage(page - 1);
         }
 
+        // nextPage: Function used by this module.
         function nextPage() {
             if (page < totalPages) setPage(page + 1);
         }
 
+        // linkToCompany: Function used by this module.
         function linkToCompany(id) {
             return function (ev) {
                 ev.preventDefault();
@@ -81,6 +106,7 @@
             };
         }
 
+        // linkToNew: Function used by this module.
         function linkToNew(ev) {
             ev.preventDefault();
             navigate("/companies/new");
@@ -177,6 +203,7 @@
 
     // --- Company Detail Page ---
 
+    // CompanyDetailPage: Company details + list of shareholdings for that company.
     function CompanyDetailPage(props) {
         const auth = useAuth();
         const navigate = props.navigate || defaultNavigate;
@@ -191,6 +218,7 @@
         const [actionError, setActionError] = useState(null);
         const [deleteLoading, setDeleteLoading] = useState(false);
 
+        // React effect: run side-effects after render (fetch data, attach listeners, sync storage, etc.).
         useEffect(
             function () {
                 if (!id) return;
@@ -223,6 +251,7 @@
             auth.user &&
             ( !company.is_restricted || company.created_by_user_id === auth.user.id );
 
+        // handleDelete: Function used by this module.
         function handleDelete() {
             if (!window.confirm(t("companies.confirm.delete"))) {
                 return;
@@ -247,11 +276,13 @@
                 });
         }
 
+        // backToList: Function used by this module.
         function backToList(ev) {
             ev.preventDefault();
             navigate("/companies");
         }
 
+        // goToEdit: Function used by this module.
         function goToEdit(ev) {
             ev.preventDefault();
             navigate("/companies/" + company.id + "/edit");
@@ -379,6 +410,7 @@
 
     // --- Company Form Page ---
 
+    // CompanyFormPage: Create/edit form for companies (ANALYST only). Prefills values in edit mode.
     function CompanyFormPage(props) {
         const auth = useAuth();
         const navigate = props.navigate || defaultNavigate;
@@ -402,6 +434,7 @@
         const [formError, setFormError] = useState(null);
         const [saving, setSaving] = useState(false);
 
+        // React effect: run side-effects after render (fetch data, attach listeners, sync storage, etc.).
         useEffect(function () {
             setLoading(true);
             setError(null);
@@ -457,11 +490,13 @@
             );
         }
 
+        // backToList: Function used by this module.
         function backToList(ev) {
             ev.preventDefault();
             navigate("/companies");
         }
 
+        // onSubmit: Function used by this module.
         function onSubmit(evt) {
             evt.preventDefault();
             setFormError(null);

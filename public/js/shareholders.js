@@ -1,22 +1,42 @@
 // public/js/shareholders.js
+
+/*
+ * shareholders.js
+ * UI pages for Shareholders:
+ * - List with pagination
+ * - Detail view
+ * - Create/Edit form (ANALYST only)
+ * - Add/Delete shareholdings from the shareholder detail page (ANALYST only)
+ */
+
 (function () {
     "use strict";
 
-    const e = React.createElement;
-    const {useState, useEffect, useContext} = React;
-    const AuthContext = window.AuthContext;
-    const useI18n = window.useI18n;
+    // `use strict` helps catch some common JavaScript mistakes early.
 
+
+    const e = React.createElement;
+    // Shorthand: `e(...)` is the same as `React.createElement(...)` (JSX without a build step).
+    const {useState, useEffect, useContext} = React;
+    // Pull React APIs we use in this file (hooks, context helpers, etc.).
+    const AuthContext = window.AuthContext;
+    // Grab a value exported by another script via `window.*` (no bundler/imports in this project).
+    const useI18n = window.useI18n;
+    // Grab a value exported by another script via `window.*` (no bundler/imports in this project).
+
+    // defaultNavigate: Small helper that updates the hash (/#/...) to perform SPA navigation.
     function defaultNavigate(path) {
         if (!path.startsWith("/")) path = "/" + path;
         window.location.hash = path;
     }
 
+    // useAuth: Custom hook: a friendly name for `useContext(AuthContext)`.
     function useAuth() {
         return useContext(AuthContext);
     }
 
     /*
+    // getShareholderTypeLabel: Function used by this module.
     function getShareholderTypeLabel(type, t) {
         if (!type) return "";
         const key = "shareholderType." + type;
@@ -27,6 +47,7 @@
 
     // --- Shareholder List ---
 
+    // ShareholderListPage: Paginated list of shareholders.
     function ShareholderListPage(props) {
         const auth = useAuth();
         const navigate = props.navigate || defaultNavigate;
@@ -38,6 +59,7 @@
         const [loading, setLoading] = useState(true);
         const [error, setError] = useState(null);
 
+        // loadData: Function used by this module.
         function loadData(p) {
             setLoading(true);
             setError(null);
@@ -57,6 +79,7 @@
                 });
         }
 
+        // React effect: run side-effects after render (fetch data, attach listeners, sync storage, etc.).
         useEffect(
             function () {
                 loadData(page);
@@ -64,14 +87,17 @@
             [page]
         );
 
+        // prevPage: Function used by this module.
         function prevPage() {
             if (page > 1) setPage(page - 1);
         }
 
+        // nextPage: Function used by this module.
         function nextPage() {
             if (page < totalPages) setPage(page + 1);
         }
 
+        // linkToShareholder: Function used by this module.
         function linkToShareholder(id) {
             return function (ev) {
                 ev.preventDefault();
@@ -79,6 +105,7 @@
             };
         }
 
+        // linkToNew: Function used by this module.
         function linkToNew(ev) {
             ev.preventDefault();
             navigate("/shareholders/new");
@@ -173,6 +200,7 @@
 
     // --- Shareholder Detail ---
 
+    // ShareholderDetailPage: Shareholder details + their holdings; analysts can add/delete shareholdings from here.
     function ShareholderDetailPage(props) {
         const auth = useAuth();
         const navigate = props.navigate || defaultNavigate;
@@ -201,6 +229,7 @@
         const [shareholdingSaving, setShareholdingSaving] = useState(false);
         const [deletingShareholdingId, setDeletingShareholdingId] = useState(null);
 
+        // loadShareholder: Function used by this module.
         function loadShareholder() {
             if (!id) return Promise.resolve();
             setLoading(true);
@@ -224,6 +253,7 @@
                 });
         }
 
+        // React effect: run side-effects after render (fetch data, attach listeners, sync storage, etc.).
         useEffect(
             function () {
                 loadShareholder();
@@ -239,6 +269,7 @@
                 setCompaniesLoading(true);
                 setCompaniesError(null);
 
+                // fetchAllCompanies: Function used by this module.
                 function fetchAllCompanies(page, acc) {
                     return window.api
                         .get("/companies?page=" + page + "&limit=100")
@@ -278,11 +309,13 @@
             [isAnalyst, auth.user && auth.user.id]
         );
 
+        // backToList: Function used by this module.
         function backToList(ev) {
             ev.preventDefault();
             navigate("/shareholders");
         }
 
+        // goToEdit: Function used by this module.
         function goToEdit(ev) {
             ev.preventDefault();
             navigate("/shareholders/" + shareholder.id + "/edit");
@@ -298,6 +331,7 @@
             return !c.is_restricted || c.created_by_user_id === auth.user.id;
         });
 
+        // canEditCompanyId: Function used by this module.
         function canEditCompanyId(companyId) {
             if (!isAnalyst || !auth.user) return false;
             const c = companyById[companyId];
@@ -305,6 +339,7 @@
             return !c.is_restricted || c.created_by_user_id === auth.user.id;
         }
 
+        // handleCreateShareholding: Function used by this module.
         function handleCreateShareholding(ev) {
             ev.preventDefault();
             setActionError(null);
@@ -367,6 +402,7 @@
                 });
         }
 
+        // handleDeleteShareholding: Function used by this module.
         function handleDeleteShareholding(holding) {
             if (!holding || !holding.id) return;
 
@@ -593,6 +629,7 @@
 
     // --- Shareholder Form ---
 
+    // ShareholderFormPage: Create/edit form for shareholders (ANALYST only).
     function ShareholderFormPage(props) {
         const auth = useAuth();
         const navigate = props.navigate || defaultNavigate;
@@ -610,6 +647,7 @@
         const [formError, setFormError] = useState(null);
         const [saving, setSaving] = useState(false);
 
+        // React effect: run side-effects after render (fetch data, attach listeners, sync storage, etc.).
         useEffect(
             function () {
                 if (!isEdit || !id) return;
@@ -651,11 +689,13 @@
             );
         }
 
+        // backToList: Function used by this module.
         function backToList(ev) {
             ev.preventDefault();
             navigate("/shareholders");
         }
 
+        // onSubmit: Function used by this module.
         function onSubmit(evt) {
             evt.preventDefault();
             setFormError(null);

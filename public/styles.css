@@ -1,3 +1,9 @@
+/*
+ * styles.css
+ * Basic styling for the SPA (layout, table + form styles, buttons, etc.).
+ * Nothing React-specific here — React just renders HTML tags and these CSS rules style them.
+ */
+
 :root {
     --bg: #f6f7fb;
     --card: #ffffff;
@@ -63,13 +69,6 @@ input, select, textarea {
     border: 1px solid var(--border);
     border-radius: 10px;
     background: white;
-}
-
-input[type="checkbox"] {
-  width: auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
 }
 
 table {

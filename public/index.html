@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+  index.html (frontend entry point)
+  - Loads React + ReactDOM via CDN (UMD builds, no bundler)
+  - Loads the app scripts in a specific order (i18n/api/auth/pages/app)
+  - React will render into the #root element below
+-->
 <html>
 <head>
     <meta charset="utf-8">
@@ -9,11 +15,12 @@
 
     <link rel="stylesheet" href="/styles.css">
 
-    <!-- React + ReactDOM (UMD builds) -->
-    <!--<script src="https://unpkg.com/react@18/umd/react.development.js"></script>-->
-    <script src="/react/react.development.js"></script>
-    <!--<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>-->
-    <script src="/react/react-dom.development.js"></script>
+    <!-- React + ReactDOM (UMD builds)
+     These scripts create global `React` and `ReactDOM` variables.
+     Because we are NOT using a bundler, we rely on these globals instead of `import` statements.
+-->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 
     <script src="/js/i18n.js"></script>
 

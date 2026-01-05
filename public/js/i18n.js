@@ -1,11 +1,26 @@
 // public/js/i18n.js
+
+/*
+ * i18n.js
+ * A minimal internationalization (i18n) layer for this app.
+ * - Stores the current language in React state + persists it to localStorage
+ * - Exposes `t(key)` for translating UI strings
+ * - Uses React Context so any component can read `t`, `lang`, `setLang`
+ */
+
 (function () {
     "use strict";
 
+    // `use strict` helps catch some common JavaScript mistakes early.
+
+
     const e = React.createElement;
+    // Shorthand: `e(...)` is the same as `React.createElement(...)` (JSX without a build step).
     const {createContext, useContext, useState, useEffect} = React;
+    // Pull React APIs we use in this file (hooks, context helpers, etc.).
 
     const I18nContext = createContext(null);
+    // Create a Context 'channel'. Default `null` means: if used without a Provider, you'll get `null`.
 
     const TRANSLATIONS = {
         en: {
@@ -368,6 +383,7 @@
         },
     };
 
+    // translate: Function used by this module.
     function translate(lang, key) {
         const table = TRANSLATIONS[lang] || TRANSLATIONS.en;
         if (table && Object.prototype.hasOwnProperty.call(table, key)) {
@@ -389,9 +405,11 @@
         return "en";
     })();
 
+    // I18nProvider: Function used by this module.
     function I18nProvider(props) {
         const [lang, setLang] = useState(DEFAULT_LANG);
 
+        // React effect: run side-effects after render (fetch data, attach listeners, sync storage, etc.).
         useEffect(
             function () {
                 try {
@@ -413,6 +431,7 @@
         return e(I18nContext.Provider, {value}, props.children);
     }
 
+    // useI18n: Function used by this module.
     function useI18n() {
         return useContext(I18nContext);
     }

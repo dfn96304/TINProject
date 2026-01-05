@@ -1,14 +1,29 @@
 // public/js/api.js
+
+/*
+ * api.js
+ * Tiny wrapper around `fetch()` used by the whole frontend.
+ * - Adds `/api` base prefix
+ * - Automatically JSON-encodes plain-object request bodies
+ * - Attaches `Authorization: Bearer <token>` when logged in
+ * - Normalizes errors by throwing an Error with `.status` and `.data`
+ */
+
 (function () {
     "use strict";
+
+    // `use strict` helps catch some common JavaScript mistakes early.
+
 
     const API_BASE = "/api";
     let authToken = null;
 
+    // setToken: Store token in this module so requests include `Authorization: Bearer ...`.
     function setToken(token) {
         authToken = token || null;
     }
 
+    // clearToken: Remove token so requests become anonymous.
     function clearToken() {
         authToken = null;
     }

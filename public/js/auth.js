@@ -1,18 +1,36 @@
 // public/js/auth.js
+
+/*
+ * auth.js
+ * Authentication state + UI pages (Login/Register) for the frontend.
+ * - Stores token + user in React state and persists them to localStorage
+ * - Exposes AuthContext so any component can know who is logged in
+ * - Wires the token into `window.api` so API calls include Authorization header
+ */
+
 (function () {
     "use strict";
 
+    // `use strict` helps catch some common JavaScript mistakes early.
+
+
     const e = React.createElement;
+    // Shorthand: `e(...)` is the same as `React.createElement(...)` (JSX without a build step).
     const {createContext, useState, useEffect, useContext} = React;
+    // Pull React APIs we use in this file (hooks, context helpers, etc.).
     const useI18n = window.useI18n;
+    // Grab a value exported by another script via `window.*` (no bundler/imports in this project).
 
     const AuthContext = createContext(null);
+    // Create a Context 'channel'. Default `null` means: if used without a Provider, you'll get `null`.
 
+    // defaultNavigate: Small helper that updates the hash (/#/...) to perform SPA navigation.
     function defaultNavigate(path) {
         if (!path.startsWith("/")) path = "/" + path;
         window.location.hash = path;
     }
 
+    // loadStoredAuth: Load token + user from localStorage so refresh keeps you logged in.
     function loadStoredAuth() {
         try {
             const token = localStorage.getItem("authToken");
@@ -28,11 +46,13 @@
         }
     }
 
+    // AuthProvider: Top-level provider that stores auth state and exposes it via React Context.
     function AuthProvider(props) {
         const initial = loadStoredAuth();
         const [token, setToken] = useState(initial.token);
         const [user, setUser] = useState(initial.user);
 
+        // React effect: run side-effects after render (fetch data, attach listeners, sync storage, etc.).
         useEffect(
             function () {
                 if (token) {
@@ -44,6 +64,7 @@
             [token]
         );
 
+        // login: Function used by this module.
         function login(newToken, newUser) {
             setToken(newToken);
             setUser(newUser);
@@ -55,6 +76,7 @@
             }
         }
 
+        // logout: Function used by this module.
         function logout() {
             setToken(null);
             setUser(null);
@@ -78,12 +100,14 @@
         return e(AuthContext.Provider, {value}, props.children);
     }
 
+    // useAuth: Custom hook: a friendly name for `useContext(AuthContext)`.
     function useAuth() {
         return useContext(AuthContext);
     }
 
     // --- UI components ---
 
+    // LoginPage: Login form: collects credentials, calls `/api/auth/login`, stores token+user, navigates to list.
     function LoginPage(props) {
         const auth = useAuth();
         const navigate = props.navigate || defaultNavigate;
@@ -94,6 +118,7 @@
         const [error, setError] = useState(null);
         const [loading, setLoading] = useState(false);
 
+        // onSubmit: Function used by this module.
         function onSubmit(evt) {
             evt.preventDefault();
             setError(null);
@@ -127,6 +152,7 @@
                 });
         }
 
+        // linkHandler: Function used by this module.
         function linkHandler(path) {
             return function (ev) {
                 ev.preventDefault();
@@ -186,6 +212,7 @@
         );
     }
 
+    // RegisterPage: Registration form: creates a user via `/api/auth/register`, stores token+user, navigates to list.
     function RegisterPage(props) {
         const auth = useAuth();
         const navigate = props.navigate || defaultNavigate;
@@ -197,6 +224,7 @@
         const [error, setError] = useState(null);
         const [loading, setLoading] = useState(false);
 
+        // onSubmit: Function used by this module.
         function onSubmit(evt) {
             evt.preventDefault();
             setError(null);
@@ -236,6 +264,7 @@
                 });
         }
 
+        // linkHandler: Function used by this module.
         function linkHandler(path) {
             return function (ev) {
                 ev.preventDefault();
@@ -307,16 +336,19 @@
         );
     }
 
+    // AuthStatusBar: Small header widget that shows guest vs logged-in state and provides login/logout links.
     function AuthStatusBar(props) {
         const auth = useAuth();
         const navigate = props.navigate || defaultNavigate;
         const {t} = useI18n();
 
+        // handleLogout: Function used by this module.
         function handleLogout() {
             auth.logout();
             navigate("/");
         }
 
+        // linkHandler: Function used by this module.
         function linkHandler(path) {
             return function (ev) {
                 ev.preventDefault();
