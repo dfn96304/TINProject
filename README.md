@@ -1,5 +1,8 @@
 # TINProject
 
+Backend: Node.js + Express.js REST API, SQLite database, JWT-style token auth + roles
+Frontend: React SPA (no bundler), custom hash (`/#/companies/1/edit`) router, i18n (EN/PL)
+
 ## How to run
 `npm install` - install dependencies
 
