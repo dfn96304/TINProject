@@ -13,3 +13,23 @@
 By default, the application listens on port 3000.
 
 To access on a local machine for testing, open `http://localhost:3000` in a browser.
+
+## Database and port configuration
+By default, the app uses a database file named `company-structure.db` in the root folder of the application as determined by `__dirname`.
+To change the path to the database, include an env var named DB_PATH, which automatically changes the used database for DB scripts and the application itself:
+```
+# Windows PowerShell
+$env:DB_PATH="C:\path\to\company-structure.db"
+npm run db:schema
+npm run db:seed
+npm start
+```
+or
+```
+# macOS/Linux
+export DB_PATH=/path/to/company-structure.db
+npm run db:schema
+npm run db:seed
+npm start
+```
+An env var named PORT can be used to change the default listening port of 3000.
