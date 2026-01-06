@@ -1,8 +1,14 @@
 # TINProject
 
-Backend: Node.js + Express.js REST API, SQLite database, JWT-style token auth + roles
+## Backend
+Node.js + Express.js REST API, SQLite database, JWT-style token auth + roles
 
-Frontend: React SPA (no bundler), custom hash (`/#/companies/1/edit`) router, i18n (EN/PL)
+## Frontend
+React SPA (no bundler), custom hash (`/#/companies/1/edit`) router, i18n (EN/PL)
+
+Located entirely in `/public`. React and ReactDOM UMD 18 builds are bundled with the app in `/public/react`
+
+The `/public` folder is served as static content using `express.static`
 
 ## How to run
 `npm install` - install dependencies
